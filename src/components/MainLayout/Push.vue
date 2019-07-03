@@ -3,75 +3,44 @@
     .push__overlay(@click.stop="closePush")
     .push__wrap(:class="{open: isOpen}" ref="wrap")
       .push__list(ref="list")
-        .push__item
+        .push__item(v-for="info in getNotifications.slice(0,10)" :key="info.id")
           .push__img
-            img(src="/static/img/user/1.jpg" alt="Артём Иващенко")
+            img(:src="info.entity_author.photo" :alt="info.entity_author.first_name")
           p.push__content
-            span.push__content-name Артём Иващенко 
-            | опубликовал новую запись 
-            span.push__content-preview «Зачем дизайнеру аркебуза?»
-          span.push__time Вчера в 18:51
-        .push__item
-          .push__img
-            img(src="/static/img/user/1.jpg" alt="Артём Иващенко")
-          p.push__content
-            span.push__content-name Артём Иващенко 
-            | опубликовал новую запись 
-            span.push__content-preview «Зачем дизайнеру аркебуза?»
-          span.push__time Вчера в 18:51
-        .push__item
-          .push__img
-            img(src="/static/img/user/1.jpg" alt="Артём Иващенко")
-          p.push__content
-            span.push__content-name Артём Иващенко 
-            | опубликовал новую запись 
-            span.push__content-preview «Зачем дизайнеру аркебуза?»
-          span.push__time Вчера в 18:51
-        .push__item
-          .push__img
-            img(src="/static/img/user/1.jpg" alt="Артём Иващенко")
-          p.push__content
-            span.push__content-name Артём Иващенко 
-            | опубликовал новую запись 
-            span.push__content-preview «Зачем дизайнеру аркебуза?»
-          span.push__time Вчера в 18:51
-        .push__item
-          .push__img
-            img(src="/static/img/user/1.jpg" alt="Артём Иващенко")
-          p.push__content
-            span.push__content-name Артём Иващенко 
-            | опубликовал новую запись 
-            span.push__content-preview «Зачем дизайнеру аркебуза?»
-          span.push__time Вчера в 18:51
-        .push__item
-          .push__img
-            img(src="/static/img/user/1.jpg" alt="Артём Иващенко")
-          p.push__content
-            span.push__content-name Артём Иващенко 
-            | опубликовал новую запись 
-            span.push__content-preview «Зачем дизайнеру аркебуза?»
-          span.push__time Вчера в 18:51
-      a.push__btn(href="#") Показать еще (19)
+            router-link.push__content-name(:to="{name: 'ProfileId', params: {id: info.entity_author.id}}") {{info.entity_author.first_name + ' ' + info.entity_author.last_name}} 
+            | {{getNotificationsTextType(info.event_type)}} 
+            span.push__content-preview «{{info.info}}»
+          span.push__time {{info.sent_time | moment('from')}}
+      router-link.push__btn(:to="{name: 'Push'}" v-if="getNotificationsLength > 10") Показать еще ({{getNotificationsLength - 5}})
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'Push',
   props: {
     isOpen: Boolean
   },
+  computed: {
+    ...mapGetters('profile/notifications', ['getNotifications', 'getNotificationsLength', 'getNotificationsTextType'])
+  },
   watch: {
     isOpen(val) {
-      if (val) this.$refs.list.scrollTop = 0
+      if (val) {
+        this.$refs.list.scrollTop = 0
+        this.readNotifications()
+      }
     }
   },
   methods: {
+    ...mapActions('profile/notifications', ['apiNotifications', 'readNotifications']),
     closePush() {
       if (!this.isOpen) return
       this.$emit('close-push')
     }
   },
   mounted() {
+    if (this.getNotificationsLength === 0) this.apiNotifications()
     if (window.innerHeight - this.$refs.wrap.getBoundingClientRect().top - this.$refs.wrap.offsetHeight < 0) {
       this.$refs.wrap.style.maxHeight = `${window.innerHeight - this.$refs.wrap.getBoundingClientRect().top}px`
     }
@@ -163,43 +132,6 @@ export default {
   &+& {
     border-top: 1px solid #E7E7E7;
   }
-}
-
-.push__img {
-  width: 65px;
-  height: 65px;
-  border-radius: 50%;
-  overflow: hidden;
-  margin-right: 20px;
-
-  img {
-    width: 100%;
-  }
-}
-
-.push__content {
-  width: 100%;
-  max-width: 350px;
-  margin-right: auto;
-  color: steel-gray;
-  font-size: 15px;
-  line-height: 22px;
-}
-
-.push__content-name {
-  color: #000;
-  font-weight: 600;
-}
-
-.push__content-preview {
-  color: eucalypt;
-  font-weight: 600;
-}
-
-.push__time {
-  font-size: 15px;
-  line-height: 22px;
-  color: #5A5A5A;
 }
 
 .push__btn {

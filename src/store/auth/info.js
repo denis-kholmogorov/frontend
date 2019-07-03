@@ -73,89 +73,11 @@ export default {
           text: 'Перейти в почту'
         }
       }
-    },
-    languages: {
-      active: {
-        id: 'ru',
-        text: 'Русский'
-      },
-      list: [{
-          id: 'ru',
-          text: 'Русский'
-        },
-        {
-          id: 'en',
-          text: 'England'
-        },
-        {
-          id: 'az',
-          text: 'Azerbaycan dili'
-        },
-        {
-          id: 'bah',
-          text: 'Bahasa Indonesia'
-        },
-        {
-          id: 'bo',
-          text: 'Bosanski'
-        },
-        {
-          id: 'dn',
-          text: 'Dansk'
-        },
-        {
-          id: 'deu',
-          text: 'Deutsch'
-        },
-        {
-          id: 'ee',
-          text: 'Eesti'
-        },
-        {
-          id: 'es',
-          text: 'Español'
-        },
-        {
-          id: 'esp',
-          text: 'Esperanto'
-        },
-        {
-          id: 'fr',
-          text: 'Français'
-        },
-        {
-          id: 'hr',
-          text: 'Hrvatski'
-        },
-        {
-          id: 'it',
-          text: 'Italiano'
-        },
-        {
-          id: 'ka',
-          text: 'Karjalan kieli'
-        },
-        {
-          id: 'ki',
-          text: 'Kiswahili'
-        },
-        {
-          id: 'rys',
-          text: 'Русинсыкый'
-        }
-      ],
-      isOpenBlock: false
     }
   },
   getters: {
-    getInfoById: state => id => state.pages[id],
-    getLanguages: s => s.languages,
-    getActiveLanguage: s => s.languages.active.text,
-    getStatusOpenBlock: s => s.languages.isOpenBlock
+    getInfoById: state => id => state.pages[id]
   },
-  mutations: {
-    setActiveLanguage: (state, lang) => state.languages.active = lang,
-    toggleLanguageBlock: s => s.languages.isOpenBlock = !s.languages.isOpenBlock
-  },
+  mutations: {},
   actions: {}
 }

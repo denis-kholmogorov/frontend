@@ -1,15 +1,12 @@
 <template lang="pug">
   .comments(:class="{open: isOpenComments, 'comments--admin': admin}")
     h4.comments__title
-      span Комментарии (4)
-      a.comments__show(@click.prevent="showComments" href="#") {{showText}}
+      span Комментарии ({{info.length}})
+      a.comments__show(@click.prevent="showComments" href="#" v-if="info.length > 1") {{showText}}
     .comments__list
-      comment-block(:admin="admin" @answer-main="onAnswer")
-      comment-block(:admin="admin" @answer-main="onAnswer")
-      comment-block(:admin="admin" @answer-main="onAnswer")
-      comment-block(:admin="admin" @answer-main="onAnswer")
+      comment-block(:admin="admin" @answer-main="onAnswer" v-for="i in info" :key="i.id" :info="i")
       .comments__add(v-if="!admin")
-        comment-add(ref="addComment" :id="info.id")
+        comment-add(ref="addComment" :id="id")
 </template>
 
 <script>
@@ -19,12 +16,8 @@ export default {
   name: 'Comments',
   props: {
     admin: Boolean,
-    info: {
-      type: Object,
-      default: () => ({
-        id: 1
-      })
-    }
+    info: Array,
+    id: Number
   },
   components: { CommentBlock, CommentAdd },
   data: () => ({

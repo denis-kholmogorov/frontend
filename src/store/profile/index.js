@@ -4,6 +4,7 @@ import friends from './friends'
 import feeds from './feeds'
 import dialogs from './dialogs'
 import comments from './comments'
+import notifications from './notifications'
 
 export default {
   namespaced: true,
@@ -13,6 +14,7 @@ export default {
     friends,
     feeds,
     dialogs,
-    comments
+    comments,
+    notifications
   }
 }

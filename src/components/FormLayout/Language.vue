@@ -5,31 +5,35 @@
       simple-svg(:filepath="'/static/img/search.svg'")
       input.form-layout__language-input(type="text" v-model="language" placeholder="Начните вводить название языка")
     ul.form-layout__language-list
-      li.form-layout__language-item(v-for="lang in filterLanguages" :key="lang.id" @click="setActiveHandler(lang)") {{lang.text}}
+      li.form-layout__language-item(v-for="lang in filterLanguages" :key="lang.id" @click="setActiveHandler(lang)") {{lang.title}}
 </template>
 
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 export default {
   name: 'FormLayoutLanguage',
   data: () => ({
     language: ''
   }),
   computed: {
-    ...mapGetters('auth/info', ['getLanguages']),
+    ...mapGetters('auth/languages', ['getLanguages']),
     filterLanguages() {
       return this.language.length > 0
-        ? this.getLanguages.list.filter(el => el.text.toLowerCase().indexOf(this.language.toLowerCase()) >= 0)
-        : this.getLanguages.list
+        ? this.getLanguages.filter(el => el.text.toLowerCase().indexOf(this.language.toLowerCase()) >= 0)
+        : this.getLanguages
     }
   },
   methods: {
-    ...mapMutations('auth/info', ['setActiveLanguage', 'toggleLanguageBlock']),
+    ...mapMutations('auth/languages', ['setActiveLanguage', 'toggleLanguageBlock']),
+    ...mapActions('auth/languages', ['apiLanguages']),
     setActiveHandler(lang) {
       this.toggleLanguageBlock()
       this.setActiveLanguage(lang)
     }
+  },
+  mounted() {
+    if (this.getLanguages.length === 0) this.apiLanguages()
   }
 }
 </script>

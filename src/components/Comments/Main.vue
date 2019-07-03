@@ -1,25 +1,35 @@
 <template lang="pug">
   .comment-main
-    a.comment-main__pic(href="#")
-      img(src="/static/img/user/1.jpg" alt="Максим Муратин")
+    router-link.comment-main__pic(:to="{name: 'ProfileId', params: {id: info.author.id}}")
+      img(:src="info.author.photo" :alt="info.author.first_name")
     .comment-main__main
-      a.comment-main__author(href="#") Максим Муратин
-      p.comment-main__text Текст комментария. Текст комментария. Текст комментария. Текст комментария. Текст комментария. Текст комментария. Текст комментария. Текст.
+      router-link.comment-main__author(:to="{name: 'ProfileId', params: {id: info.id}}") {{info.author.first_name + ' ' + info.author.last_name}}
+      p.comment-main__text {{info.comment_text}}
       .comment-main__actions
-        span.comment-main__time сегодня в 13:36
+        span.comment-main__time {{info.time | moment('from') }}
         template(v-if="!admin")
           a.comment-main__review(href="#" @click.prevent="$emit('answer-comment')") Ответить
-          like-comment(fill)
+          like-comment(fill :active="info.my_like" @click.native="likeAction(info.id, info.post_id, info.my_like)")
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import LikeComment from '@/components/LikeComment'
 export default {
   name: 'CommentMain',
   props: {
-    admin: Boolean
+    admin: Boolean,
+    info: Object
   },
-  components: { LikeComment }
+  components: { LikeComment },
+  methods: {
+    ...mapActions('global/likes', ['putLike', 'deleteLike']),
+    likeAction(id, post_id, active) {
+      active
+        ? this.deleteLike({ item_id: id, post_id, type: 'Comment' })
+        : this.putLike({ item_id: id, post_id, type: 'Comment' })
+    }
+  }
 }
 </script>
 
@@ -43,6 +53,10 @@ export default {
   img {
     width: 100%;
   }
+}
+
+.comment-main__main {
+  width: 100%;
 }
 
 .comment-main__author {

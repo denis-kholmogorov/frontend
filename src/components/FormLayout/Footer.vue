@@ -12,14 +12,14 @@ import { mapGetters, mapMutations } from 'vuex'
 export default {
   name: 'FormLayoutFooter',
   computed: {
-    ...mapGetters('auth/info', ['getActiveLanguage']),
+    ...mapGetters('auth/languages', ['getActiveLanguage']),
     year() {
       let date = new Date()
       return date.getFullYear()
     }
   },
   methods: {
-    ...mapMutations('auth/info', ['setActiveLanguage', 'toggleLanguageBlock'])
+    ...mapMutations('auth/languages', ['setActiveLanguage', 'toggleLanguageBlock'])
   }
 }
 </script>

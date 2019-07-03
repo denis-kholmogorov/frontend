@@ -39,7 +39,8 @@ export default {
       }).catch(error => {})
     },
     async apiChangeInfo({
-      commit
+      commit,
+      dispatch
     }, user) {
       await axios({
         url: 'users/me',
@@ -47,6 +48,12 @@ export default {
         data: user
       }).then(response => {
         console.log("TCL: apiChangeInfo -> response", response)
+        dispatch('global/alert/setAlert', {
+          status: 'success',
+          text: 'Информация обновлена'
+        }, {
+          root: true
+        })
         commit('setInfo', response.data.data)
       }).catch(error => {})
     },
@@ -55,17 +62,6 @@ export default {
         url: 'users/me',
         method: 'DELETE'
       }).then(response => {}).catch(error => {})
-    },
-    async apiAddPost({
-      state
-    }, date) {
-      let dateUrl = date ? `?publish_date=${date}` : ''
-      await axios({
-        url: `users/${state.info.id}/wall${dateUrl}`,
-        method: 'PUT'
-      }).then(response => {
-        console.log("TCL: apiAddToWall -> response", response)
-      }).catch(error => {})
     }
   }
 }

@@ -15,7 +15,7 @@ export default {
   name: 'CommentAdd',
   props: {
     value: String,
-    id: Number,
+    id: [Number, String],
     parentId: Number
   },
   data: () => ({

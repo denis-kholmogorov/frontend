@@ -8,7 +8,7 @@
       .main-layout__push(@click="togglePush")
         simple-svg(:filepath="'/static/img/push.svg'")
         push(:isOpen="isOpenPush" @close-push="togglePush")
-    .main-layout__user(v-if="getInfo")
+    router-link.main-layout__user(v-if="getInfo" :to="{name: 'Profile'}")
       .main-layout__user-pic
         img(:src="getInfo.photo" :alt="getInfo.fullName")
       span.main-layout__user-name {{getInfo.fullName}}
@@ -140,6 +140,7 @@ export default {
   align-items: center;
   font-weight: 600;
   font-size: 15px;
+  color: #fff;
 }
 
 .main-layout__user-pic {

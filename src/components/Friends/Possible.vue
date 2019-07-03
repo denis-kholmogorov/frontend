@@ -5,7 +5,7 @@
       li.friends-possible__item(v-for="user in possibleFriends" :key="user.id")
         .friends-possible__pic
           img(:src="user.photo" :alt="user.first_name")
-        span.friends-possible__name {{user.first_name + ' ' + user.last_name}}
+        router-link.friends-possible__name(:to="{name: 'ProfileId', params: {id: user.id}}") {{user.first_name + ' ' + user.last_name}}
         a.friends-possible__link(href="#" @click.prevent="apiAddFriends(user.id)") Добавить
     router-link.friends-possible__btn(href="#" :to="{name: 'FriendsFind'}")
       simple-svg(:filepath="'/static/img/search.svg'")

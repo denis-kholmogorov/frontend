@@ -1,5 +1,5 @@
 import axios from 'axios'
-
+import moment from 'moment'
 export default {
   namespaced: true,
   state: {
@@ -12,6 +12,26 @@ export default {
   getters: {
     getResult: s => s.result,
     getResultById: s => id => s.result[id],
+    getMessages(state) {
+      const groups = state.result.messages.reduce((groups, mes) => {
+        const date = moment(mes.time).format().split('T')[0];
+        if (!groups[date]) {
+          groups[date] = [];
+        }
+        groups[date].push(mes);
+        return groups;
+      }, {});
+
+      // Edit: to add it in the array format instead
+      const groupArrays = Object.keys(groups).map((date) => {
+        return {
+          date: moment(date).valueOf(),
+          messages: groups[date]
+        };
+      });
+
+      return groupArrays
+    }
   },
   mutations: {
     setResult: (s, result) => s.result[result.id] = result.value
@@ -28,7 +48,6 @@ export default {
         url: `dialogs?${query.join('&')}`,
         method: 'GET'
       }).then(response => {
-        console.log("TCL: apiDialogs -> response", response)
         commit('setResult', {
           id: 'dialogs',
           value: response.data.data
@@ -45,7 +64,6 @@ export default {
           users_ids: [id]
         }
       }).then(response => {
-        console.log("TCL: apiNewDialog -> response", response)
         dispatch('apiDialogs')
       }).catch(error => {})
     },
@@ -56,14 +74,14 @@ export default {
         url: `dialogs/${id}/messages`,
         method: 'GET'
       }).then(response => {
-        console.log("TCL: dialogsMessages -> response", response)
+        console.log("TCL: dialogsMessages -> response", response.data.data)
         commit('setResult', {
           id: 'messages',
           value: response.data.data
         })
       }).catch(error => {})
     },
-    async postMessages({
+    async postMessage({
       dispatch
     }, payload) {
       await axios({
@@ -73,8 +91,7 @@ export default {
           message_text: payload.text
         }
       }).then(response => {
-        console.log("TCL: dialogsMessages -> response", response)
-        dispatch('dialogsMessages', id)
+        dispatch('dialogsMessages', payload.id)
       }).catch(error => {})
     },
     async apiUnreadedMessages({
@@ -84,7 +101,6 @@ export default {
         url: 'dialogs/unreaded',
         method: 'GET'
       }).then(response => {
-        console.log("TCL: apiUnreadedMessages -> response", response)
         commit('setResult', {
           id: 'unreadedMessages',
           value: response.data.data.count

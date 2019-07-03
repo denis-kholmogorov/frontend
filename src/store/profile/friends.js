@@ -43,6 +43,12 @@ export default {
         method: 'DELETE'
       }).then(response => {
         console.log("TCL: response", response)
+        dispatch('global/alert/setAlert', {
+          status: 'success',
+          text: 'Пользователь удален из друзей'
+        }, {
+          root: true
+        })
         dispatch('apiFriends')
       }).catch(error => {})
     },
@@ -54,6 +60,12 @@ export default {
         method: 'POST'
       }).then(response => {
         console.log("TCL: response", response)
+        dispatch('global/alert/setAlert', {
+          status: 'success',
+          text: 'Заявка отправлена'
+        }, {
+          root: true
+        })
         dispatch('apiFriends')
       }).catch(error => {})
     },
@@ -91,6 +103,6 @@ export default {
           value: response.data.data
         })
       }).catch(error => {})
-    },
+    }
   }
 }

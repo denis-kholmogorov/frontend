@@ -28,7 +28,8 @@
       span.user-info-form__label
       .user-info-form__wrap
         button-hover(@click.native.prevent="submitHandler") Сохранить
-        button-hover(variant="red" bordered) Отменить
+        router-link.settings-main__back(:to="{name: 'Profile'}")
+          button-hover(variant="red" bordered) Отменить
 </template>
 
 <script>
@@ -64,6 +65,7 @@ export default {
     src: ''
   }),
   computed: {
+    ...mapGetters('global/storage', ['getStorage']),
     ...mapGetters('profile/info', ['getInfo']),
     phoneNumber() {
       return this.phone.replace(/\D+/g, '')
@@ -80,14 +82,19 @@ export default {
     }
   },
   methods: {
+    ...mapActions('global/storage', ['apiStorage']),
     ...mapActions('profile/info', ['apiChangeInfo']),
     submitHandler() {
-      this.apiChangeInfo({
-        first_name: this.name,
-        last_name: this.lastName,
-        birth_date: moment([this.year, this.month.val - 1, this.day]).format(),
-        phone: this.phoneNumber.substr(0, 1) == 9 && '8' + this.phoneNumber,
-        about: this.about
+      if (!this.src) return
+      this.apiStorage(this.photo).then(() => {
+        this.apiChangeInfo({
+          photo_id: this.getStorage && this.getStorage.id,
+          first_name: this.name,
+          last_name: this.lastName,
+          birth_date: moment([this.year, this.month.val - 1, this.day]).format(),
+          phone: this.phoneNumber.substr(0, 1) == 9 && '8' + this.phoneNumber,
+          about: this.about
+        })
       })
     },
     processFile(event) {
@@ -101,10 +108,12 @@ export default {
     },
     deletePhoto() {
       this.photo = null
+      this.src = ''
     },
     setInfo() {
       this.name = this.getInfo.first_name
       this.lastName = this.getInfo.last_name
+      this.src = this.getInfo.photo
       this.phone = this.getInfo.phone.substr(0, 1) == 8 ? this.getInfo.phone.slice(1) : this.getInfo.phone.slice(2)
       this.day = moment(this.getInfo.birth_date).date()
       this.month = this.months[moment(this.getInfo.birth_date).month()]
@@ -139,5 +148,9 @@ export default {
   @media (max-width: breakpoint-xl) {
     padding: 40px 20px;
   }
+}
+
+.settings-main__back {
+  margin-left: 20px;
 }
 </style>

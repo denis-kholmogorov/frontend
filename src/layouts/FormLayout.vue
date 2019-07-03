@@ -2,7 +2,7 @@
   .form-layout
     .form-layout__info(:style="styleInfo")
       .form-layout__container
-        .form-layout__logo
+        router-link.form-layout__logo(:to="{name: routeName}")
           simple-svg(:filepath="'/static/img/logo.svg'")
         form-layout-info
         form-layout-footer
@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters } from 'vuex'
 import FormLayoutFooter from '@/components/FormLayout/Footer'
 import FormLayoutInfo from '@/components/FormLayout/Info'
 import FormLayoutLanguage from '@/components/FormLayout/Language'
@@ -23,11 +23,15 @@ export default {
     FormLayoutLanguage
   },
   computed: {
-    ...mapGetters('auth/info', ['getStatusOpenBlock']),
+    ...mapGetters('auth/languages', ['getStatusOpenBlock']),
+    ...mapGetters('auth/api', ['isAuthenticated']),
     styleInfo() {
       return this.getStatusOpenBlock
         ? { transform: `translateY(-${this.$refs.language.$refs.language.scrollHeight + 20}px)` }
         : null
+    },
+    routeName() {
+      return this.isAuthenticated ? 'News' : 'Login'
     }
   }
 }

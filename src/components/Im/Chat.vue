@@ -1,53 +1,49 @@
 <template lang="pug">
   .im-chat
     .im-chat__user
-      .im-chat__user-pic
-        img(src="/static/img/user/1.jpg" alt="Дмитрий Сергеев")
-      h2.im-chat__user-name Дмитрий Сергеев
+      router-link.im-chat__user-pic(:to="{name: 'ProfileId', params: {id: info.last_message.recipient.id}}")
+        img(:src="info.last_message.recipient.photo" :alt="info.last_message.recipient.first_name")
+      router-link.im-chat__user-name(:to="{name: 'ProfileId', params: {id: info.last_message.recipient.id}}") {{info.last_message.recipient.first_name + ' ' + info.last_message.recipient.last_name}}
       span.user-status(:class="{online}") {{statusText}}
-    .im-chat__message(ref="message")
-      .im-chat__message-day
-        h5.im-chat__message-title 19 сентября 2018
-        .im-chat__message-block.me
-          p.im-chat__message-text Привет) Смотри, в общем я тут сделал те странички, которые мы с тобой тогда обсуждали. Ты можешь их сейчас посмотреть? Напиши мне, что думаешь насчет них?
-          span.im-chat__message-time 13:01
-        .im-chat__message-block
-          p.im-chat__message-text Блин, ну круто получилось, мне очень нравится! Только вот там осталась одна страничка с контактами.
-          span.im-chat__message-time 13:10
-        .im-chat__message-block
-          p.im-chat__message-text Ты сможешь сделать это до завтра?
-          span.im-chat__message-time 13:12
-      .im-chat__message-day
-        h5.im-chat__message-title 20 сентября 2018
-        .im-chat__message-block.me
-          p.im-chat__message-text Привет) Смотри, в общем я тут сделал те странички, которые мы с тобой тогда обсуждали. Ты можешь их сейчас посмотреть? Напиши мне, что думаешь насчет них?
-          span.im-chat__message-time 13:01
-        .im-chat__message-block
-          p.im-chat__message-text Блин, ну круто получилось, мне очень нравится! Только вот там осталась одна страничка с контактами.
-          span.im-chat__message-time 13:10
-        .im-chat__message-block
-          p.im-chat__message-text Ты сможешь сделать это до завтра?
-          span.im-chat__message-time 13:12
-        .im-chat__message-block.me
-          p.im-chat__message-text Да, не вопрос!
-          span.im-chat__message-time 13:15
-    form.im-chat__enter(action="#" @submit.prevent="")
-      input.im-chat__enter-input(type="text" placeholder="Ваше сообщение...")
+    .im-chat__message(ref="messageBlock")
+      .im-chat__message-day(v-for="day in messages" :key="day.date")
+        h5.im-chat__message-title {{day.date | moment('DD MMMM YYYY')}}
+        .im-chat__message-block(v-for="mes in day.messages" :key="mes.id" :class="{me: mes.isSentByMe}")
+          p.im-chat__message-text {{mes.message_text}}
+          span.im-chat__message-time {{mes.time | moment('hh:mm')}}
+    form.im-chat__enter(action="#" @submit.prevent="onSubmitMessage")
+      input.im-chat__enter-input(type="text" placeholder="Ваше сообщение..." v-model="mes")
 </template>
 
 <script>
+import moment from 'moment'
+import { mapActions } from 'vuex'
 export default {
   name: 'ImChat',
+  props: {
+    info: Object,
+    messages: Array,
+    online: Boolean
+  },
   data: () => ({
-    online: false
+    mes: ''
   }),
   computed: {
     statusText() {
-      return this.online ? 'Онлайн' : 'был в сети вчера в 22:10'
+      return this.online
+        ? 'Онлайн'
+        : 'был в сети ' + moment(this.info.last_message.recipient.last_online_time).fromNow()
+    }
+  },
+  methods: {
+    ...mapActions('profile/dialogs', ['postMessage']),
+    onSubmitMessage() {
+      this.postMessage({ id: this.info.id, message_text: this.mes })
+      this.mes = ''
     }
   },
   mounted() {
-    this.$refs.message.scrollTop = this.$refs.message.scrollHeight
+    this.$refs.messageBlock.scrollTop = this.$refs.messageBlock.scrollHeight
   }
 }
 </script>

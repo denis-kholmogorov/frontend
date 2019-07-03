@@ -4,9 +4,10 @@
     input.form__input(name="password" type="password" :id="id"
       v-model.trim="password"
       @change="v.$touch()"
-      :class="{invalid: (v.$dirty && !v.required) || (v.$dirty && !v.sameAsPassword)}"
+      :class="{invalid: (v.$dirty && !v.required) || (v.$dirty && !v.minLength) || (v.$dirty && !v.sameAsPassword)}"
     )
     span.form__error(v-if="v.$dirty && !v.sameAsPassword") Пароли должны совпадать
+    span.form__error(v-if="v.$dirty && !v.minLength") Пароль должен быть не менее {{v.$params.minLength.min}} символов. Сейчас он {{password.length}}
 </template>
 
 <script>

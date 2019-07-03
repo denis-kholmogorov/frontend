@@ -1,33 +1,31 @@
 <template lang="pug">
   .settings-push
     ul.settings-push__list
-      li.settings-push__item(v-for="(item,index) in list" :key="index")
+      li.settings-push__item(v-for="item in getNotificationsSettings" :key="item.type")
         .settings-push__icon
           simple-svg(:filepath="`/static/img/settings/push/${item.icon}.svg`")
         h2.settings-push__name {{item.name}}
         .settings-push__check
-          input.settings-push__check-input(type="checkbox" :id="item.icon" @change="onChecked(item)" v-model="item.checked")
+          input.settings-push__check-input(type="checkbox" :id="item.icon" @change="onChecked(item)" :checked="item.enable")
           label.settings-push__check-label(:for="item.icon")
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 export default {
   name: 'SettingsPush',
-  data: () => ({
-    list: [
-      { icon: 'comments', name: 'О новых комментариях к моим публикациям', type: 'POST_COMMENT', checked: true },
-      { icon: 'reviews', name: 'О ответах на мои комментарии', type: 'COMMENT_COMMENT', checked: true },
-      { icon: 'friends', name: 'О заявках в дузья', type: 'FRIEND_REQUEST', checked: false },
-      { icon: 'messages', name: 'О новых личных сообщениях', type: 'MESSAGE', checked: true },
-      { icon: 'birthdays', name: 'О дне рождения друга ', type: 'FRIEND_BIRTHDAY', checked: true }
-    ]
-  }),
+  computed: {
+    ...mapGetters('profile/account', ['getNotificationsSettings'])
+  },
   methods: {
     ...mapActions('profile/account', ['changeNotifications']),
+    ...mapActions('profile/account', ['apiNotificationsSettings']),
     onChecked(item) {
       this.changeNotifications({ notification_type: item.type, enable: item.checked })
     }
+  },
+  mounted() {
+    this.apiNotificationsSettings()
   }
 }
 </script>

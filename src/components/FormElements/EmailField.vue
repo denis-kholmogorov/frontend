@@ -3,7 +3,7 @@
     input.form__input(:id="id" v-model="email" name="email" :class="{invalid: (v.$dirty && !v.required) || (v.$dirty && !v.email)}" @change="v.$touch()")
     label.form__label(:for="id") {{placeholder}}
     span.form__error(v-if="v.$dirty && !v.required") Введите Email
-    span.form__error(v-else-if="v.$dirty && !v.email") Введите корректные Email
+    span.form__error(v-else-if="v.$dirty && !v.email") Введите корректный Email
 </template>
 
 <script>

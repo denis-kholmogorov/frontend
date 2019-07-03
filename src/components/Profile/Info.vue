@@ -4,7 +4,7 @@
       .profile-info__img(:class="{offline: !online && !me}")
         img(:src="info.photo" :alt="info.fullName")
       .profile-info__actions(v-if="!me")
-        button-hover(:disable="blocked") Написать сообщение
+        button-hover(:disable="blocked" @click.native="onSentMessage") Написать сообщение
         button-hover.profile-info__add(:variant="btnVariantInfo.variant" bordered  @click.native="profileAction") {{btnVariantInfo.text}}
     .profile-info__main
       router-link.edit(v-if="me" :to="{name: 'Settings'}")
@@ -21,7 +21,7 @@
         a.profile-info__val(:href="`tel:${info.phone}`") {{info.phone | phone}}
       .profile-info__block
         span.profile-info__title Страна, город:
-        span.profile-info__val Россия, {{info.town}}
+        span.profile-info__val {{info.country.title}}, {{info.city.title}}
       .profile-info__block
         span.profile-info__title О себе:
         span.profile-info__val {{info.about}}
@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import Modal from '@/components/Modal'
 
 export default {
@@ -52,6 +52,10 @@ export default {
     modalType: 'deleteFriend'
   }),
   computed: {
+    ...mapGetters('profile/dialogs', ['getResultById']),
+    dialogs() {
+      return this.getResultById('dialogs')
+    },
     statusText() {
       return this.online ? 'онлайн' : 'не в сети'
     },
@@ -68,6 +72,9 @@ export default {
   },
   methods: {
     ...mapActions('users/actions', ['apiBlockUser', 'apiUnblockUser']),
+    ...mapActions('profile/friends', ['apiAddFriends', 'apiDeleteFriends']),
+    ...mapActions('profile/dialogs', ['apiNewDialog', 'apiDialogs']),
+    ...mapActions('users/info', ['apiInfo']),
     blockedUser() {
       if (this.blocked) return
       this.modalText = `Вы уверены, что хотите заблокировать пользователя ${this.info.fullName}`
@@ -75,28 +82,47 @@ export default {
       this.modalType = 'block'
     },
     profileAction() {
+      if (this.blocked) {
+        this.apiUnblockUser(this.$route.params.id).then(() => {
+          this.apiInfo(this.$route.params.id)
+        })
+        return
+      }
       if (this.friend) {
         this.modalText = `Вы уверены, что хотите удалить пользователя ${this.info.fullName} из друзей?`
         this.modalShow = true
         this.modalType = 'deleteFriend'
         return
       }
-
-      if (this.blocked) {
-        this.apiUnblockUser(this.$route.params.id)
-        return
-      }
-      console.log('add user')
+      this.apiAddFriends(this.info.id).then(() => {
+        this.apiInfo(this.$route.params.id)
+      })
     },
     closeModal() {
       this.modalShow = false
     },
     onConfirm() {
       if (this.modalType === 'block') {
-        this.apiBlockUser(this.$route.params.id)
+        this.apiBlockUser(this.$route.params.id).then(() => {
+          this.apiInfo(this.$route.params.id)
+          this.closeModal()
+        })
         return
       }
-      console.log('delete user')
+      this.apiDeleteFriends(this.$route.params.id).then(() => {
+        this.apiInfo(this.$route.params.id)
+        this.closeModal()
+      })
+    },
+    onSentMessage() {
+      if (this.blocked) return false
+      this.apiDialogs().then(() => {
+        let el = this.dialogs.find(el => el.last_message.recipient.id === this.info.id)
+        el ? this.routerPushImById(el.id) : this.apiNewDialog(this.info.id).then(() => this.routerPushImById(el.id))
+      })
+    },
+    routerPushImById(id) {
+      this.$router.push({ name: 'Im', query: { activeDialog: id } })
     }
   }
 }

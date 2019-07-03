@@ -3,9 +3,9 @@
     .friends-block__img
       img(:src="info.photo" :alt="info.first_name")
     .friends-block__info
-      span.friends-block__name {{info.first_name}} {{info.last_name}}
+      router-link.friends-block__name(:to="{name: 'ProfileId', params: {id: info.id}}") {{info.first_name}} {{info.last_name}}
       span.friends-block__age-city(v-if="moderator") модератор
-      span.friends-block__age-city(v-else) {{info.birth_date | moment('from', true)}}, {{info.town_id}}
+      span.friends-block__age-city(v-else) {{info.birth_date | moment('from', true)}}, {{info.city.title}}
     .friends-block__actions
       template(v-if="moderator")
         .friends-block__actions-block(v-tooltip.bottom="'Редактировать'")
@@ -18,7 +18,7 @@
         .friends-block__actions-block(v-tooltip.bottom="'Заблокировать'" v-else)
           simple-svg(:filepath="'/static/img/blocked.svg'")
       template(v-else)
-        .friends-block__actions-block.message(v-tooltip.bottom="'Написать сообщение'")
+        .friends-block__actions-block.message(v-tooltip.bottom="'Написать сообщение'" @click="onSentMessage")
           simple-svg(:filepath="'/static/img/sidebar/im.svg'")
         .friends-block__actions-block.delete(v-tooltip.bottom="'Удалить из друзей'" @click="openModal('delete')" v-if="friend")
           simple-svg(:filepath="'/static/img/delete.svg'")
@@ -35,7 +35,7 @@
 
 <script>
 import Modal from '@/components/Modal'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 export default {
   name: 'FriendsBlock',
   props: {
@@ -61,6 +61,10 @@ export default {
     modalType: 'delete'
   }),
   computed: {
+    ...mapGetters('profile/dialogs', ['getResultById']),
+    dialogs() {
+      return this.getResultById('dialogs')
+    },
     modalText() {
       return this.modalType === 'delete'
         ? 'Вы уверены, что хотите удалить пользователя Дмитрий Сергеев из друзей?'
@@ -71,6 +75,7 @@ export default {
   },
   methods: {
     ...mapActions('profile/friends', ['apiAddFriends', 'apiDeleteFriends']),
+    ...mapActions('profile/dialogs', ['apiNewDialog', 'apiDialogs']),
     ...mapActions('users/actions', ['apiBlockUser', 'apiUnblockUser']),
     closeModal() {
       this.modalShow = false
@@ -81,10 +86,19 @@ export default {
     },
     onConfrim(id) {
       this.modalType === 'delete'
-        ? this.apiDeleteFriends(id)
+        ? this.apiDeleteFriends(id).then(() => this.closeModal())
         : this.modalType === 'deleteModerator'
         ? console.log('delete moderator')
-        : this.apiBlockUser(id)
+        : this.apiBlockUser(id).then(() => this.closeModal())
+    },
+    onSentMessage() {
+      this.apiDialogs().then(() => {
+        let el = this.dialogs.find(el => el.last_message.recipient.id === this.info.id)
+        el ? this.routerPushImById(el.id) : this.apiNewDialog(this.info.id).then(() => this.routerPushImById(el.id))
+      })
+    },
+    routerPushImById(id) {
+      this.$router.push({ name: 'Im', query: { activeDialog: id } })
     }
   }
 }

@@ -1,6 +1,6 @@
 <template lang="pug">
   .add-tags
-    input.add-tags__input(type="text" placeholder="Добавить тег..." v-model="tag" @change="addTag")
+    input.add-tags__input(type="text" placeholder="Добавить тег..." v-model="tag" ref="input" @change="addTag")
     .add-tags__block
       .add-tags__item(v-for="(tag,index) in tags" :key="index") {{'#'+tag}}
         span.add-tags__delete(@click="deleteTag(index)") &#10005;
@@ -26,6 +26,9 @@ export default {
       this.tagsComponent.push(this.tag)
       this.tag = ''
       this.$emit('change-tags', this.tagsComponent)
+      setTimeout(() => {
+        this.$refs.input.focus()
+      }, 0)
     }
   },
   watch: {

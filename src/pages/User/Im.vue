@@ -1,32 +1,70 @@
 <template lang="pug">
   .im
     .im__dialogs
-      im-dialog(online :push="4")
-      im-dialog(active)
-      im-dialog(online me)
-      im-dialog
-    .im__chat
-      im-chat
+      im-dialog(v-for="dialog in dialogs"
+      :key="dialog.id" 
+      :info="dialog" 
+      :push="countPush(dialog.unread_count)" 
+      :me="dialog.last_message.isSentByMe" 
+      :active="dialog.id === activeDialogId" 
+      :online="checkOnlineUser(dialog.last_message.recipient.last_online_time)" 
+      @click.native="changeDialog(dialog.id)")
+    .im__chat(v-if="activeDialog")
+      im-chat(:info="activeDialog" :messages="getMessages" 
+      :online="checkOnlineUser(activeDialog.last_message.recipient.last_online_time)" )
 </template>
 
 <script>
+import moment from 'moment'
 import { mapGetters, mapActions } from 'vuex'
 import ImDialog from '@/components/Im/Dialog'
 import ImChat from '@/components/Im/Chat'
 export default {
   name: 'Im',
   components: { ImDialog, ImChat },
+  data: () => ({
+    activeDialogId: null,
+    activeDialog: null,
+    intervalForMessages: null
+  }),
   computed: {
-    ...mapGetters('profile/dialogs', ['getResultById']),
+    ...mapGetters('profile/dialogs', ['getResultById', 'getMessages']),
     dialogs() {
       return this.getResultById('dialogs')
     }
   },
   methods: {
-    ...mapActions('profile/dialogs', ['apiDialogs'])
+    ...mapActions('profile/dialogs', ['apiDialogs', 'dialogsMessages']),
+    countPush(unread) {
+      return unread > 0 ? unread : null
+    },
+    checkOnlineUser(time) {
+      return moment().diff(moment(time), 'seconds') <= 60
+    },
+    changeDialog(id) {
+      this.activeDialogId = id
+      this.activeDialog = this.dialogs.find(el => el.id === id)
+      this.intervalForMessages = setInterval(() => {
+        this.dialogsMessages(id)
+      }, 2000)
+    }
   },
-  mounted() {
-    if (this.dialogs.length === 0) this.apiDialogs()
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.apiDialogs().then(() => {
+        vm.$route.query.activeDialog
+          ? (vm.activeDialogId = vm.$route.query.activeDialog)
+          : (vm.activeDialogId = vm.dialogs[0].id)
+        vm.activeDialog = vm.dialogs.find(el => el.id === vm.activeDialogId)
+        vm.intervalForMessages = setInterval(() => {
+          vm.dialogsMessages(vm.activeDialogId)
+        }, 2000)
+      })
+    })
+  },
+  beforeRouteLeave(to, from, next) {
+    this.intervalForMessages = null
+    next()
   }
 }
 </script>

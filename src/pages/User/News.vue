@@ -23,8 +23,10 @@ export default {
   methods: {
     ...mapActions('profile/feeds', ['apiFeeds'])
   },
-  mounted() {
-    if (this.getFeeds.length === 0) this.apiFeeds()
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.apiFeeds()
+    })
   }
 }
 </script>

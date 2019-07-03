@@ -5,7 +5,7 @@
       .main-layout__admin-logo(v-if="isAdminPage")
         simple-svg(:filepath="'/static/img/logo-admin.svg'")
     nav.main-layout__nav
-      router-link.main-layout__link(v-for="(item,index) in info" :key="index" :exact="item.exact" :to="item.link" :class="{'main-layout__link--im': item.link.name === 'Im'}" :data-push="item.link.name === 'Im' ? 4 : false")
+      router-link.main-layout__link(v-for="(item,index) in info" :key="index" :exact="item.exact" :to="item.link" :class="{'main-layout__link--im': item.link.name === 'Im', 'big': unreadedMessages >= 100}" :data-push="item.link.name === 'Im' ? unreadedMessages : false")
         img(:src="`/static/img/sidebar/admin/${item.icon}.png`" :alt="item.text" v-if="isAdminPage")
         simple-svg(:filepath="`/static/img/sidebar/${item.icon}.svg`" v-else)
         span {{item.text}}
@@ -23,6 +23,10 @@ export default {
   name: 'MainLayoutSidebar',
   computed: {
     ...mapGetters('global/menu', ['getSidebarById']),
+    ...mapGetters('profile/dialogs', ['getResultById']),
+    unreadedMessages() {
+      return this.getResultById('unreadedMessages')
+    },
     isAdminPage() {
       return this.$route.path.indexOf('admin') !== -1
     },
@@ -32,11 +36,15 @@ export default {
   },
   methods: {
     ...mapActions('auth/api', ['logout']),
+    ...mapActions('profile/dialogs', ['apiUnreadedMessages']),
     onLogout() {
       this.logout().then(() => {
         this.$router.push({ name: 'Login' })
       })
     }
+  },
+  mounted() {
+    this.apiUnreadedMessages()
   }
 }
 </script>
@@ -121,6 +129,14 @@ export default {
       right: 10px;
       top: 50%;
       transform: translateY(-50%);
+    }
+
+    &.big {
+      &:after {
+        width: 35px;
+        height: 35px;
+        right: 5px;
+      }
     }
 
     .simple-svg {

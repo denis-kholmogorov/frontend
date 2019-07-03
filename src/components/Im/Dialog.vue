@@ -1,30 +1,34 @@
 <template lang="pug">
   .im-dialog(:class="{active, push}")
-    .im-dailog__pic
-      img(src="/static/img/user/1.jpg" alt="Артём Иващенко")
+    router-link.im-dailog__pic(:to="{name: 'ProfileId', params: {id: info.last_message.recipient.id}}")
+      img(:src="info.last_message.recipient.photo" :alt="info.last_message.recipient.first_name")
     .im-dialog__info
-      h3.im-dialog__name Артём Иващенко
+      router-link.im-dialog__name(:to="{name: 'ProfileId', params: {id: info.last_message.recipient.id}}") {{info.last_message.recipient.first_name + ' ' + info.last_message.recipient.last_name}}
       span.user-status(:class="{online}") {{statusText}}
     .im-dialog__content
       p.im-dialog__last
         span.im-dialog__last-me(v-if="me") Вы: 
-        | Скорее всего я поеду домой и буду там тусить до утра, потому что я очень люблю свой дом
-      span.im-dialog__time 3 минуты назад
+        | {{info.last_message.message_text}}
+      span.im-dialog__time {{info.last_message.time | moment('from')}}
     span.im-dialog__push(v-if="push > 0") {{push}}
 </template>
 
 <script>
+import moment from 'moment'
 export default {
   name: 'ImDialog',
   props: {
     active: Boolean,
     push: Number,
     online: Boolean,
-    me: Boolean
+    me: Boolean,
+    info: Object
   },
   computed: {
     statusText() {
-      return this.online ? 'Онлайн' : 'был в сети вчера в 22:10'
+      return this.online
+        ? 'Онлайн'
+        : 'был в сети ' + moment(this.info.last_message.recipient.last_online_time).fromNow()
     }
   }
 }

@@ -24,6 +24,12 @@ export default {
         data: user,
         method: 'POST'
       }).then(async response => {
+        dispatch('global/alert/setAlert', {
+          status: 'success',
+          text: 'Зарегестрирован, делаю логин'
+        }, {
+          root: true
+        })
         await dispatch('login', {
           email: user.email,
           password: user.passwd1
@@ -53,7 +59,8 @@ export default {
       })
     },
     async logout({
-      commit
+      commit,
+      dispatch
     }) {
       await axios({
         url: 'auth/logout',
@@ -61,6 +68,12 @@ export default {
       }).then(() => {
         commit('setToken', '')
         commit('setStatus', 'logout')
+        dispatch('global/alert/setAlert', {
+          status: 'success',
+          text: 'Вы вышли из системы'
+        }, {
+          root: true
+        })
         localStorage.removeItem('user-token')
         delete axios.defaults.headers.common['Authorization']
       }).catch(error => {})

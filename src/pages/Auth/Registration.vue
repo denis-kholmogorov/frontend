@@ -4,8 +4,8 @@
       .form__block
         h4.form__subtitle Аккаунт
         email-field(id="register-email" v-model="email" :v="$v.email" :class="{checked: $v.email.required && $v.email.email}")
-        password-field(id="register-password" v-model="passwd1" :v="$v.passwd1" info registration :class="{checked: $v.passwd1.required && $v.passwd2.sameAsPassword}")
-        password-repeat-field(id="register-repeat-password" v-model="passwd2" :v="$v.passwd2" :class="{checked: $v.passwd1.required && $v.passwd2.sameAsPassword}")
+        password-field(id="register-password" v-model="passwd1" :v="$v.passwd1" info registration :class="{checked: $v.passwd1.required && $v.passwd2.sameAsPassword && $v.password.minLength}")
+        password-repeat-field(id="register-repeat-password" v-model="passwd2" :v="$v.passwd2" :class="{checked: $v.passwd1.required && $v.passwd2.sameAsPassword && $v.password.minLength}")
       .form__block
         h4.form__subtitle Личные данные
         name-field(id="register-firstName" v-model="firstName" :v="$v.firstName")
@@ -75,7 +75,7 @@ export default {
     confirm: { sameAs: sameAs(() => true) },
     email: { required, email },
     passwd1: { required, minLength: minLength(8) },
-    passwd2: { required, sameAsPassword: sameAs('passwd1') },
+    passwd2: { required, minLength: minLength(8), sameAsPassword: sameAs('passwd1') },
     firstName: { required, minLength: minLength(3) },
     lastName: { required, minLength: minLength(3) },
     number: {

@@ -1,50 +1,51 @@
 <template lang="pug">
   .news-block(:class="{deffered, 'news-block--admin': admin}")
-    template(v-if="!admin")
-      .edit(v-if="edit")
-        simple-svg(:filepath="'/static/img/edit.svg'")
+    add-form(v-if="isEditNews" :info="info" edit :deffered="deffered" @submit-complete="toggleEditNews")
     template(v-else)
-      .edit(v-tooltip.bottom="'Разблокировать'" v-if="blocked")
-        simple-svg(:filepath="'/static/img/unblocked.svg'")
-      .edit(v-tooltip.bottom="'Заблокировать'" v-else)
-        simple-svg(:filepath="'/static/img/blocked.svg'")
-    .news-block__deffered(v-if="deffered")
-      span.news-block__deffered-text Дата и время публикации: {{info.time | moment('DD.MM.YYYY, HH:mm')}} ({{diffTime(info.time)}})
-    .news-block__author(v-if="!deffered")
-      a.news-block__author-pic(href="#")
-        img(src="/static/img/user/1.jpg" alt="Дмитрий Сергеев")
-      .news-block__author-info
-        a.news-block__author-name(href="#") Дмитрий Сергеев
-        span.news-block__author-time {{info.time | moment("from")}}
-    .news-block__content
-      .news-block__content-main
-        h3.news-block__content-title {{info.title}}
-        p.news-block__content-text(ref="text" :class="{lotText: isLotText, open: openText}") {{info.post_text}}
-        a.news-block__content-more(href="#" v-if="isLotText" @click.prevent="toggleText") 
-          template(v-if="openText") Скрыть
-          template(v-else) Читать весь пост
-      ul.news-block__content-tags
-        li.news-block__content-tag #skillbox
-        li.news-block__content-tag #книги
-        li.news-block__content-tag #книганедели
-        li.news-block__content-tag #подарки
-        li.news-block__content-tag #skillboxраспродажа
-    .news-block__actions(v-if="!deffered && !admin")
-      .news-block__actions-block
-        like-comment(:quantity="info.likes" width="16px" height="16px" font-size="15px" @click.native="likeAction")
-      .news-block__actions-block
-        like-comment(:quantity="55" width="16px" height="16px" font-size="15px" comment)
-    .news-block__comments(v-if="!deffered")
-      comments(:admin="admin")
+      template(v-if="!admin")
+        .edit(v-if="edit" @click="toggleEditNews")
+          simple-svg(:filepath="'/static/img/edit.svg'")
+      template(v-else)
+        .edit(v-tooltip.bottom="'Разблокировать'" v-if="blocked")
+          simple-svg(:filepath="'/static/img/unblocked.svg'")
+        .edit(v-tooltip.bottom="'Заблокировать'" v-else)
+          simple-svg(:filepath="'/static/img/blocked.svg'")
+      .news-block__deffered(v-if="deffered")
+        span.news-block__deffered-text Дата и время публикации: {{info.time | moment('DD.MM.YYYY, HH:mm')}} ({{diffTime(info.time)}})
+      .news-block__author(v-if="!deffered")
+        router-link.news-block__author-pic(:to="{name: 'ProfileId', params: {id: info.id}}")
+          img(:src="info.author.photo" :alt="info.author.first_name")
+        .news-block__author-info
+          router-link.news-block__author-name(:to="{name: 'ProfileId', params: {id: info.id}}") {{info.author.first_name + ' ' + info.author.last_name}}
+          span.news-block__author-time {{info.time | moment("from")}}
+      .news-block__content
+        .news-block__content-main
+          h3.news-block__content-title {{info.title}}
+          p.news-block__content-text(ref="text" :class="{lotText: isLotText, open: openText}") {{info.post_text}}
+          a.news-block__content-more(href="#" v-if="isLotText" @click.prevent="toggleText") 
+            template(v-if="openText") Скрыть
+            template(v-else) Читать весь пост
+        ul.news-block__content-tags
+          li.news-block__content-tag(v-for="(tag,index) in info.tags" :key="index") {{'#'+tag}}
+      .news-block__actions(v-if="!deffered && !admin")
+        .news-block__actions-block
+          like-comment(:quantity="info.likes" width="16px" height="16px" font-size="15px" @click.native="likeAction(info.id, info.my_like)" :active="info.my_like")
+        .news-block__actions-block
+          like-comment(:quantity="info.comments.length" width="16px" height="16px" font-size="15px" comment)
+      .news-block__comments(v-if="!deffered")
+        comments(:admin="admin" :info="info.comments" :id="info.id")
 </template>
 
 <script>
+import AddForm from '@/components/News/AddForm'
+import { mapActions } from 'vuex'
 import moment from 'moment'
 import Comments from '@/components/Comments'
 import LikeComment from '@/components/LikeComment'
+import AddTags from '@/components/News/AddTags'
 export default {
   name: 'NewsBlock',
-  components: { Comments, LikeComment },
+  components: { Comments, LikeComment, AddForm },
   props: {
     info: {
       type: Object,
@@ -54,7 +55,8 @@ export default {
           'А вот и «Книга недели от Skillbox и МИФ». Сегодня делимся с вами книгой «Дизайн привычных вещей» автора Дональда Нормана. В ней Дональд рассказывает об основополагающих принципах, которым нужно следовать, чтобы избежать проблем и превратить привычные вещи в приятные товары, доставляющие нам удовольствие А вот и «Книга недели от Skillbox и МИФ». Сегодня делимся с вами книгой «Дизайн привычных вещей» автора Дональда Нормана. В ней Дональд рассказывает об основополагающих принципах, которым нужно следовать, чтобы избежать проблем и превратить привычные вещи в приятные товары, доставляющие нам удовольствие',
         time: 1559751301818,
         likes: 44,
-        id: 1
+        id: 1,
+        tags: ['tag1']
       })
     },
     edit: Boolean,
@@ -64,22 +66,26 @@ export default {
   },
   data: () => ({
     isLotText: false,
-    openText: false
+    openText: false,
+    isEditNews: false
   }),
   methods: {
+    ...mapActions('global/likes', ['putLike', 'deleteLike']),
     toggleText() {
       this.openText = !this.openText
     },
     diffTime(time) {
       let now = moment()
       let timePost = moment(time)
-      console.log('TCL: diffTime -> time', timePost.diff(now, 'hours') % 24)
       return timePost.calendar(null, {
         sameElse: `[через ${timePost.diff(now, 'days')} дней, ${timePost.diff(now, 'hours') % 24} часа]`
       })
     },
-    likeAction() {
-      console.log('like')
+    likeAction(id, active) {
+      active ? this.deleteLike({ item_id: id, type: 'Post' }) : this.putLike({ item_id: id, type: 'Post' })
+    },
+    toggleEditNews() {
+      this.isEditNews = !this.isEditNews
     }
   },
   mounted() {

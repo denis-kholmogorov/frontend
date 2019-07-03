@@ -3,7 +3,8 @@ export default [{
     name: 'ShiftPassword',
     meta: {
       layout: 'form',
-      notRequiresAuth: true
+      notRequiresAuth: true,
+      title: 'Изменить пароль'
     },
     component: () => import('@/pages/Shift/ShiftPassword.vue')
   },
@@ -12,7 +13,8 @@ export default [{
     name: 'ShiftEmail',
     meta: {
       layout: 'form',
-      notRequiresAuth: true
+      notRequiresAuth: true,
+      title: 'Изменить Email'
     },
     component: () => import('@/pages/Shift/ShiftEmail.vue')
   },
@@ -21,7 +23,8 @@ export default [{
     name: 'ShiftEmailSuccess',
     meta: {
       layout: 'form',
-      notRequiresAuth: true
+      notRequiresAuth: true,
+      title: 'Успешное изменение Email'
     },
     component: () => import('@/pages/Shift/ShiftEmailSuccess.vue')
   }

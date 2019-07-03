@@ -1,7 +1,7 @@
 <template lang="pug">
   .like-comment(:class="{active, fill}")
     simple-svg(:filepath="`/static/img/${currentIcon}.svg`" :width="width" :height="height")
-    span(v-if="quantity > 1" :style="{'font-size': fontSize}") {{quantity}}
+    span(v-if="quantity >= 1" :style="{'font-size': fontSize}") {{quantity}}
 </template>
 
 <script>

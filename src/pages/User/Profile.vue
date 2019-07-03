@@ -3,10 +3,10 @@
     .inner-page__main
       .profile__info
         profile-info(me online :info="getInfo")
-      .profile__news
+      .profile__news(v-if="getWall.length > 0")
         .profile__tabs
-          span.profile__tab(@click="changeTab('published')" :class="{active: activeTab === 'published'}") Мои публикации (7)
-          span.profile__tab(@click="changeTab('queue')" :class="{active: activeTab === 'queue'}") Отложенные публикации (5)
+          span.profile__tab(@click="changeTab('POSTED')" :class="{active: activeTab === 'published'}") Мои публикации ({{getWallPostedLength}})
+          span.profile__tab(@click="changeTab('QUEUED')" :class="{active: activeTab === 'queue'}" v-if="getWallQueuedLength > 0") Отложенные публикации ({{getWallQueuedLength}})
         .profile__add
           news-add
         .profile__news-list
@@ -25,20 +25,19 @@ export default {
   name: 'Profile',
   components: { FriendsPossible, ProfileInfo, NewsAdd, NewsBlock },
   data: () => ({
-    activeTab: 'published'
+    activeTab: 'POSTED'
   }),
   computed: {
     ...mapGetters('profile/info', ['getInfo']),
-    ...mapGetters('users/info', ['getWall']),
+    ...mapGetters('users/info', ['getWall', 'getWallPostedLength', 'getWallQueuedLength']),
     activeWall() {
-      return this.getWall[this.activeTab]
+      return this.getWall.filter(el => el.type === this.activeTab)
     }
   },
   methods: {
     ...mapActions('users/info', ['apiWall']),
     changeTab(tab) {
       this.activeTab = tab
-      if (tab === 'queue' && this.getWall.queue.length === 0) this.apiWall({ id: this.getInfo.id, queue: true })
     }
   }
 }

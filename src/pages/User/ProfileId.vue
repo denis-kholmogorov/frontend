@@ -2,12 +2,12 @@
   .profile.inner-page(v-if="getInfo")
     .inner-page__main
       .profile__info
-        profile-info(:info="getInfo")
+        profile-info(:info="getInfo" :blocked="getInfo.is_blocked" :friend="getInfo.is_friend" :online="getInfo.is_onlined")
       .profile__news
         .profile__tabs
-          span.profile__tab.active Публикации {{getInfo.first_name}} (21)
+          span.profile__tab.active Публикации {{getInfo.first_name}} ({{getWall.length}})
         .profile__news-list
-          news-block
+          news-block(v-for="news in getWall" :key="news.id" :info="news")
     .inner-page__aside
       friends-possible
 </template>
@@ -24,7 +24,7 @@ export default {
     loading: false
   }),
   computed: {
-    ...mapGetters('users/info', ['getInfo'])
+    ...mapGetters('users/info', ['getInfo', 'getWall'])
   },
   methods: {
     ...mapActions('users/info', ['apiInfo'])

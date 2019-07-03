@@ -8,14 +8,28 @@ export default {
         url: 'likes',
         method: 'PUT',
         data
-      }).then(response => {}).catch(error => {})
+      }).then(response => {
+        data.type === 'Post' ? dispatch('users/info/apiWallById', data.item_id, {
+          root: true
+        }) : dispatch('users/info/apiCommentsById', data.post_id, {
+          root: true
+        })
+      }).catch(error => {})
     },
-    async deleteLike({}, data) {
+    async deleteLike({
+      dispatch
+    }, data) {
       await axios({
         url: `likes?item_id=${data.item_id}&type=${data.type}`,
         method: 'DELETE',
         data
-      }).then(response => {}).catch(error => {})
+      }).then(response => {
+        data.type === 'Post' ? dispatch('users/info/apiWallById', data.item_id, {
+          root: true
+        }) : dispatch('users/info/apiCommentsById', data.post_id, {
+          root: true
+        })
+      }).catch(error => {})
     }
   }
 }

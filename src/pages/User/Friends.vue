@@ -19,6 +19,7 @@
 </template>
 
 <script>
+import store from '@/store'
 import { mapGetters, mapActions } from 'vuex'
 import FriendsPossible from '@/components/Friends/Possible'
 import FriendsBlock from '@/components/Friends/Block'
@@ -37,11 +38,10 @@ export default {
   methods: {
     ...mapActions('profile/friends', ['apiFriends'])
   },
-  mounted() {
-    if (this.friends.length === 0)
-      this.apiFriends().then(() => {
-        this.loading = false
-      })
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.apiFriends().then(() => (vm.loading = false))
+    })
   }
 }
 </script>

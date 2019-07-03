@@ -11,7 +11,6 @@ export default {
         url: `post/${payload.post_id}/comments`,
         method: 'GET'
       }).then(response => {
-        console.log("TCL: commentsById -> response", response)
         let dataComments = {
           post_id: payload.post_id,
           value: response.data.data

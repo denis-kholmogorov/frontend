@@ -5,7 +5,6 @@
       component(:is="`search-filter-${tabSelect}`" v-if="tabSelect !== 'all'")
     .search__main(:class="{high: tabSelect !== 'all'}")
       component(:is="`search-${tabSelect}`" v-if="hasSearchText")
-      p(v-else) Введите текст и нажмите Enter
 </template>
 
 <script>

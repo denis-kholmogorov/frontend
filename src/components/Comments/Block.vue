@@ -5,13 +5,12 @@
         simple-svg(:filepath="'/static/img/unblocked.svg'")
       .edit(v-tooltip.bottom="'Заблокировать'" v-else)
         simple-svg(:filepath="'/static/img/blocked.svg'")
-    comment-main(:admin="admin" @answer-comment="$emit('answer-main')")
+    comment-main(:admin="admin" @answer-comment="$emit('answer-main')" :info="info")
     .comment-block__reviews
-      a.comment-block__reviews-show(href="#" v-if="!isShowSubComments" @click.prevent="showSubComments") показать 2 ответа
+      a.comment-block__reviews-show(href="#" v-if="!isShowSubComments" @click.prevent="showSubComments") показать {{info.sub_comments.length}} {{answerText}}
       .comment-block__reviews-list(v-else)
-        comment-main(:admin="admin" @answer-comment="onAnswerSub")
-        comment-main(:admin="admin" @answer-comment="onAnswerSub")
-        comment-add(v-if="!admin" ref="addComment" :id="info.id" parent-id="1")
+        comment-main(:admin="admin" @answer-comment="onAnswerSub" v-for="i in info.sub_comments" :key="i.id" :info="i")
+        comment-add(v-if="!admin" ref="addComment" :id="info.post_id" :parent-id="info.parent_id")
 </template>
 
 <script>
@@ -23,18 +22,19 @@ export default {
   props: {
     admin: Boolean,
     blocked: Boolean,
-    info: {
-      type: Object,
-      default: () => ({
-        id: 1
-      })
-    }
+    info: Object
   },
   components: { CommentMain, CommentAdd },
   data: () => ({
     isShowSubComments: false,
     comment: ''
   }),
+  computed: {
+    answerText() {
+      if (!this.info) return 'ответ'
+      return this.info.sub_comments.length > 1 ? 'ответа' : 'ответ'
+    }
+  },
   methods: {
     ...mapActions('profile/comments', ['newComment']),
     showSubComments() {
