@@ -67,13 +67,15 @@
   font-size 15px
   line-height 22px
   color #fff
-  background transparent
+  background-color transparent
   padding-bottom 10px
   cursor pointer
   transition all .2s
   &:-webkit-autofill,
   &:-webkit-autofill:hover, 
   &:-webkit-autofill:focus
+    background-color transparent !important
+    color #fff !important
     -webkit-animation-name autofill
     -webkit-animation-fill-mode both
   &:focus

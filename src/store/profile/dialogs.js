@@ -74,7 +74,6 @@ export default {
         url: `dialogs/${id}/messages`,
         method: 'GET'
       }).then(response => {
-        console.log("TCL: dialogsMessages -> response", response.data.data)
         commit('setResult', {
           id: 'messages',
           value: response.data.data

@@ -18,6 +18,8 @@ export default {
           return 'ответил на ваш комментарий'
         case 'FRIEND_REQUEST':
           return 'добавил в друзья нового пользователя'
+        case 'FRIEND_BIRTHDAY':
+          return 'день рождение'
         case 'MESSAGE':
           return 'прислал сообщение'
       }
