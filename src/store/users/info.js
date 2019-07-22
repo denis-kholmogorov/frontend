@@ -46,7 +46,7 @@ export default {
       commit
     }, payload) {
       await axios({
-        url: `users/${payload.id}/wall?offset=${payload.offset}&itemPerPage=${payload.itemPerPage}`,
+        url: `users/${payload.id}/wall${payload.offset ? '?offset='+payload.offset : ''}${payload.itemPerPage ? '&itemPerPage='+payload.itemPerPage : ''}`,
         method: 'GET'
       }).then(response => {
         console.log("TCL: apiWall response", response.data.data)
