@@ -86,6 +86,7 @@ export default {
     ...mapActions('profile/info', ['apiChangeInfo']),
     submitHandler() {
       if (!this.src) return
+      debugger
       this.apiStorage(this.photo).then(() => {
         this.apiChangeInfo({
           photo_id: this.getStorage && this.getStorage.id,
@@ -114,7 +115,10 @@ export default {
       this.name = this.getInfo.first_name
       this.lastName = this.getInfo.last_name
       this.src = this.getInfo.photo
-      this.phone = this.getInfo.phone.substr(0, 1) == 8 ? this.getInfo.phone.slice(1) : this.getInfo.phone.slice(2)
+      this.phone =
+        this.getInfo.phone.substr(0, 1) == 8 || this.getInfo.phone.substr(0, 1) == 7
+          ? this.getInfo.phone.slice(1)
+          : this.getInfo.phone.slice(2)
       this.day = moment(this.getInfo.birth_date).date()
       this.month = this.months[moment(this.getInfo.birth_date).month()]
       this.year = moment(this.getInfo.birth_date).year()

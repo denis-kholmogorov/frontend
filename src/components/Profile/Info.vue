@@ -20,7 +20,7 @@
         span.profile-info__title Телефон:
         a.profile-info__val(:href="`tel:${info.phone}`") {{info.phone | phone}}
       .profile-info__block
-        span.profile-info__title Страна, город:
+        span.profile-info__title(v-if="info.country.title && info.city.title") Страна, город:
         span.profile-info__val {{info.country.title}}, {{info.city.title}}
       .profile-info__block
         span.profile-info__title О себе:
