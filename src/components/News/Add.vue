@@ -1,5 +1,5 @@
 <template lang="pug">
-  .news-add(@click="toggleForm" :class="{open: isOpen}")
+  .news-add(@click="openForm" :class="{open: isOpen}")
     .news-add__mask(v-if="!isOpen")
       template(v-if="getInfo")
         .news-add__pic(v-if="user")
@@ -9,7 +9,7 @@
         simple-svg(:filepath="'/static/img/photo.svg'")
       .news-add__block.add
         simple-svg(:filepath="'/static/img/add.svg'")
-    add-form(v-else @submit-complete="toggleForm")
+    add-form(v-else @submit-complete="closeForm")
 </template>
 
 <script>
@@ -29,8 +29,11 @@ export default {
     ...mapGetters('profile/info', ['getInfo'])
   },
   methods: {
-    toggleForm() {
-      this.isOpen = !this.isOpen
+    openForm() {
+      this.isOpen = true
+    },
+    closeForm() {
+      this.isOpen = false
     }
   }
 }

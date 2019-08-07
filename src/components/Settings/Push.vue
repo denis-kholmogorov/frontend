@@ -21,7 +21,7 @@ export default {
     ...mapActions('profile/account', ['changeNotifications']),
     ...mapActions('profile/account', ['apiNotificationsSettings']),
     onChecked(item) {
-      this.changeNotifications({ notification_type: item.type, enable: item.checked })
+      this.changeNotifications({ notification_type: item.type, enable: !item.enable })
     }
   },
   mounted() {

@@ -3,6 +3,8 @@
     user-info-form-block(label="Имя:" placeholder="Введите имя" v-model="name" )
     user-info-form-block(label="Фамилия:" placeholder="Введите фамилию" v-model="lastName" )
     user-info-form-block(label="Телефон:" placeholder="Введите телефон" v-model="phone" phone)
+    user-info-form-block(label="Страна:" placeholder="Введите страну" v-model="country")
+    user-info-form-block(label="Город:" placeholder="Введите город" v-model="city")
     .user-info-form__block
       span.user-info-form__label Дата рождения:
       .user-info-form__wrap
@@ -62,7 +64,9 @@ export default {
       { val: 12, text: 'Декабря' }
     ],
     photo: null,
-    src: ''
+    src: '',
+    country: '',
+    city: ''
   }),
   computed: {
     ...mapGetters('global/storage', ['getStorage']),
@@ -86,7 +90,6 @@ export default {
     ...mapActions('profile/info', ['apiChangeInfo']),
     submitHandler() {
       if (!this.src) return
-      debugger
       this.apiStorage(this.photo).then(() => {
         this.apiChangeInfo({
           photo_id: this.getStorage && this.getStorage.id,
@@ -94,7 +97,9 @@ export default {
           last_name: this.lastName,
           birth_date: moment([this.year, this.month.val - 1, this.day]).format(),
           phone: this.phoneNumber.substr(0, 1) == 9 && '8' + this.phoneNumber,
-          about: this.about
+          about: this.about,
+          country: this.country,
+          city: this.city
         })
       })
     },
@@ -123,6 +128,8 @@ export default {
       this.month = this.months[moment(this.getInfo.birth_date).month()]
       this.year = moment(this.getInfo.birth_date).year()
       this.about = this.getInfo.about
+      this.country = this.getInfo.country.title
+      this.city = this.getInfo.city.title
     }
   },
   watch: {
