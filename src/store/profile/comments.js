@@ -32,7 +32,7 @@ export default {
         method: 'POST',
         data: {
           parent_id: payload.parent_id || null,
-          comment_text: payload.comment_text
+          comment_text: payload.text
         }
       }).then(() => {
         dispatch('commentsById', {

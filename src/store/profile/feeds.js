@@ -39,7 +39,7 @@ export default {
         method,
         data: {
           title: payload.title,
-          post_text: payload.text,
+          post_text: payload.post_text,
           tags: payload.tags
         }
       }).then(response => {
