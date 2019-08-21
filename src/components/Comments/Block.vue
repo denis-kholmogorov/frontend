@@ -5,9 +5,9 @@
         simple-svg(:filepath="'/static/img/unblocked.svg'")
       .edit(v-tooltip.bottom="'Заблокировать'" v-else)
         simple-svg(:filepath="'/static/img/blocked.svg'")
-    comment-main(:admin="admin" @answer-comment="$emit('answer-main')" :info="info")
+    comment-main(:admin="admin" @answer-comment="onAnswerMain" :info="info")
     .comment-block__reviews
-      a.comment-block__reviews-show(href="#" v-if="!isShowSubComments" @click.prevent="showSubComments") показать {{info.sub_comments.length}} {{answerText}}
+      a.comment-block__reviews-show(href="#" v-if="!isShowSubComments && info.sub_comments.length > 0" @click.prevent="showSubComments") показать {{info.sub_comments.length}} {{answerText}}
       .comment-block__reviews-list(v-else)
         comment-main(:admin="admin" @answer-comment="onAnswerSub" v-for="i in info.sub_comments" :key="i.id" :info="i")
         comment-add(v-if="!admin" ref="addComment" :id="info.post_id" :parent-id="info.parent_id")
@@ -43,7 +43,10 @@ export default {
     onAnswerSub() {
       this.$refs.addComment.$refs.addInput.focus()
     },
-    onSubmitCommentMain() {}
+    onAnswerMain() {
+      this.showSubComments()
+      this.$nextTick(() => this.onAnswerSub())
+    }
   }
 }
 </script>

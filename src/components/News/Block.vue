@@ -22,7 +22,7 @@
         .news-block__content-main
           h3.news-block__content-title {{info.title}}
           p.news-block__content-text(ref="text" :class="{lotText: isLotText, open: openText}") {{info.post_text}}
-          a.news-block__content-more(href="#" v-if="isLotText" @click.prevent="toggleText") 
+          a.news-block__content-more(href="#" v-if="isLotText" @click.prevent="toggleText")
             template(v-if="openText") Скрыть
             template(v-else) Читать весь пост
         ul.news-block__content-tags

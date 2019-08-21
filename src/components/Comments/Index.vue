@@ -4,7 +4,7 @@
       span Комментарии ({{info.length}})
       a.comments__show(@click.prevent="showComments" href="#" v-if="info.length > 1") {{showText}}
     .comments__list
-      comment-block(:admin="admin" @answer-main="onAnswer" v-for="i in info" :key="i.id" :info="i")
+      comment-block(:admin="admin" v-for="i in info" :key="i.id" :info="i")
       .comments__add(v-if="!admin")
         comment-add(ref="addComment" :id="id")
 </template>
@@ -32,9 +32,6 @@ export default {
   methods: {
     showComments() {
       this.isOpenComments = !this.isOpenComments
-    },
-    onAnswer() {
-      this.$refs.addComment.$refs.addInput.focus()
     }
   }
 }

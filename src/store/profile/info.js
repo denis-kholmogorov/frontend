@@ -42,6 +42,7 @@ export default {
       commit,
       dispatch
     }, user) {
+      console.log("TCL: user", user)
       await axios({
         url: 'users/me',
         method: 'PUT',
