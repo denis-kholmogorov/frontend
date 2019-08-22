@@ -87,7 +87,7 @@ export default {
         url: `dialogs/${payload.id}/messages`,
         method: 'POST',
         data: {
-          message_text: payload.text
+          message_text: payload.message_text
         }
       }).then(response => {
         dispatch('dialogsMessages', payload.id)
