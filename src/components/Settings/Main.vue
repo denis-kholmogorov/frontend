@@ -96,7 +96,7 @@ export default {
           first_name: this.name,
           last_name: this.lastName,
           birth_date: moment([this.year, this.month.val - 1, this.day]).format(),
-          phone: this.phoneNumber.substr(0, 1) == 9 && '8' + this.phoneNumber,
+          phone: this.phoneNumber,
           about: this.about,
           country: this.country,
           city: this.city

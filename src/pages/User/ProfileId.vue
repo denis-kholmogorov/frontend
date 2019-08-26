@@ -1,11 +1,11 @@
 <template lang="pug">
-  .profile.inner-page(v-if="getInfo")
+  .profile.inner-page(v-if="getUsersInfo")
     .inner-page__main
       .profile__info
-        profile-info(:info="getInfo" :blocked="getInfo.is_blocked" :friend="getInfo.is_friend" :online="getInfo.is_onlined")
+        profile-info(:info="getUsersInfo" :blocked="getUsersInfo.is_blocked" :friend="getUsersInfo.is_friend" :online="getUsersInfo.is_onlined")
       .profile__news
         .profile__tabs
-          span.profile__tab.active Публикации {{getInfo.first_name}} ({{getWall.length}})
+          span.profile__tab.active Публикации {{getUsersInfo.first_name}} ({{getWall.length}})
         .profile__news-list
           news-block(v-for="news in getWall" :key="news.id" :info="news")
     .inner-page__aside
@@ -24,13 +24,13 @@ export default {
     loading: false
   }),
   computed: {
-    ...mapGetters('users/info', ['getInfo', 'getWall'])
+    ...mapGetters('users/info', ['getUsersInfo', 'getWall'])
   },
   methods: {
-    ...mapActions('users/info', ['apiInfo'])
+    ...mapActions('users/info', ['userInfoId'])
   },
   created() {
-    if (!this.getInfo || this.getInfo.id !== this.$route.params.id) this.apiInfo(this.$route.params.id)
+    this.userInfoId(this.$route.params.id)
   }
 }
 </script>

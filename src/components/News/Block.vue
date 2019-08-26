@@ -13,7 +13,7 @@
       .news-block__deffered(v-if="deffered")
         span.news-block__deffered-text Дата и время публикации: {{info.time | moment('DD.MM.YYYY, HH:mm')}} ({{diffTime(info.time)}})
       .news-block__author(v-if="!deffered")
-        router-link.news-block__author-pic(:to="{name: 'ProfileId', params: {id: info.id}}")
+        router-link.news-block__author-pic(:to="{name: 'ProfileId', params: {id: info.author.id}}")
           img(:src="info.author.photo" :alt="info.author.first_name")
         .news-block__author-info
           router-link.news-block__author-name(:to="{name: 'ProfileId', params: {id: info.id}}") {{info.author.first_name + ' ' + info.author.last_name}}
@@ -21,7 +21,7 @@
       .news-block__content
         .news-block__content-main
           h3.news-block__content-title {{info.title}}
-          p.news-block__content-text(ref="text" :class="{lotText: isLotText, open: openText}") {{info.post_text}}
+          p.news-block__content-text(ref="text" :class="{lotText: isLotText, open: openText}" v-html="info.post_text")
           a.news-block__content-more(href="#" v-if="isLotText" @click.prevent="toggleText")
             template(v-if="openText") Скрыть
             template(v-else) Читать весь пост

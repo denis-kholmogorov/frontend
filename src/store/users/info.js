@@ -5,13 +5,26 @@ export default {
   namespaced: true,
   state: {
     info: null,
-    wall: []
+    wall: [],
+    users: null
   },
   getters: {
     getInfo(state) {
       if (!state.info) return
       let result = {
         ...state.info
+      }
+      // если понадобиться то добавить склонение (для публикаций, но нужен или пол или отчество)
+      // библиотека - petrovich
+      result.fullName = result.first_name + ' ' + result.last_name
+      result.ages = moment().diff(result.birth_date, 'years')
+      result.is_onlined = moment().diff(moment(result.last_online_time), 'seconds') <= 60
+      return result
+    },
+    getUsersInfo(state) {
+      if (!state.users) return
+      let result = {
+        ...state.users
       }
       // если понадобиться то добавить склонение (для публикаций, но нужен или пол или отчество)
       // библиотека - petrovich
@@ -28,7 +41,8 @@ export default {
     setInfo: (s, info) => s.info = info,
     setWall: (s, wall) => s.wall = wall,
     setWallById: (s, payload) => s.wall[s.wall.indexOf(s.wall.find(el => el.id === payload.id))] = payload.value,
-    setCommentsById: (s, payload) => s.wall[s.wall.indexOf(s.wall.find(el => el.id === payload.id))].comments = payload.value
+    setCommentsById: (s, payload) => s.wall[s.wall.indexOf(s.wall.find(el => el.id === payload.id))].comments = payload.value,
+    setUsersInfo: (s, info) => s.users = info
   },
   actions: {
     async apiInfo({
@@ -44,9 +58,9 @@ export default {
     },
     async apiWall({
       commit
-    }, payload) {
+    }, {id, offset, itemPerPage}) {
       await axios({
-        url: `users/${payload.id}/wall${payload.offset ? '?offset='+payload.offset : ''}${payload.itemPerPage ? '&itemPerPage='+payload.itemPerPage : ''}`,
+        url: `users/${id}/wall${offset ? '?offset='+offset : ''}${itemPerPage ? '&itemPerPage='+itemPerPage : ''}`,
         method: 'GET'
       }).then(response => {
         console.log("TCL: apiWall response", response.data.data)
@@ -74,6 +88,17 @@ export default {
         method: 'GET'
       }).then(response => {
         commit('setCommentsById', response.data.data)
+      }).catch(error => {})
+    },
+    async userInfoId({
+      commit, dispatch
+    }, id) {
+      await axios({
+        url: `users/${id}`,
+        method: 'GET'
+      }).then(async response => {
+        await dispatch('apiWall', {id})
+        commit('setUsersInfo', response.data.data)
       }).catch(error => {})
     }
   }

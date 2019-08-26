@@ -18,7 +18,7 @@
       .form__password-icon.active
         simple-svg(:filepath="'/static/img/password-info.svg'")
       p.form__password-info Пароль должен состоять из латинских букв, цифр и знаков. Обязательно содержать одну заглавную букву, одну цифру и состоять из 8 символов.
-    .form__password-icon(:class="{'active': password.length > 0}" @click="switchVisibility" v-else)
+    .form__password-icon(:class="{'active': password.length > 0}" @click="switchVisibility" v-if="!registration")
       simple-svg(:filepath="'/static/img/password-eye.svg'")
 </template>
 
