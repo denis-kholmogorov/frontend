@@ -2,7 +2,7 @@
   .search-filter
     .search-filter__block
       label.search__label(for="search-news-author") Автор:
-      input.search__input(type="text" id="search-news-author")
+      input.search__input(type="text" id="search-news-author" v-model="author")
     .search-filter__block.time
       label.search__label Время публикации:
       select.select.search-filter__select(v-model="date_from")
@@ -27,7 +27,8 @@ export default {
     date_from: 'year',
     date_to: 0,
     offset: 0,
-    itemPerPage: 20
+    itemPerPage: 20,
+    author: ''
   }),
   computed: {
     ...mapGetters('global/search', ['searchText'])
@@ -43,7 +44,8 @@ export default {
         date_from: moment()
           .subtract(1, this.date_from)
           .valueOf(),
-        date_to: this.date_to
+        date_to: this.date_to,
+        author: this.author
       })
     }
   },
