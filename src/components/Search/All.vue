@@ -2,7 +2,7 @@
   .search-all
     search-block(title="Люди", id="users" all)
       .friends__list
-        friends-block(:info="users")
+        friends-block(v-for="user in users" :key="user.id" :info="user")
     search-block(title="Новости", id="news" all)
       news-block(v-for="n in news" :key="n.id" :info="n")
 </template>

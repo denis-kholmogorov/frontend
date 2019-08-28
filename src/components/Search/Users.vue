@@ -2,7 +2,7 @@
   .search-users
     search-block(title="Люди", id="users")
       .friends__list
-        friends-block(v-for="user in searchUsers" :key="user.id" :info="user")
+        friends-block(v-for="user in users" :key="user.id" :info="user")
 </template>
 
 <script>
