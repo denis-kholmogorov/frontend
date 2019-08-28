@@ -57,6 +57,20 @@ export default {
             })
         }
       }).catch(() => {})
+    },
+    async deleteFeeds({dispatch}, payload) {
+      await axios({
+        url: `post/${payload.post_id}`,
+        method: 'DELETE'
+      }).then(response => {
+        payload.route === 'News' ?
+          dispatch('apiFeeds') :
+          dispatch('users/info/apiWall', {
+            id: payload.id
+          }, {
+            root: true
+          })
+      }).catch(() => {})
     }
   }
 }

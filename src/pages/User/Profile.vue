@@ -10,7 +10,7 @@
         .profile__add
           news-add
         .profile__news-list
-          news-block(edit :deffered="activeTab === 'queue'" v-for="news in activeWall" :key="news.id" :info="news")
+          news-block(edit deleted :deffered="activeTab === 'queue'" v-for="news in activeWall" :key="news.id" :info="news")
     .inner-page__aside
       friends-possible
 </template>

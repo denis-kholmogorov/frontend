@@ -2,7 +2,7 @@
   form.comment-add(action="#" @submit.prevent="onSubmitComment")
     .comment-add__pic(v-if="getInfo")
       img(:src="getInfo.photo" :alt="getInfo.fullName")
-    input.comment-add__input(type="text" placeholder="Написать комментарий..." ref="addInput" v-model="text")
+    input.comment-add__input(type="text" placeholder="Написать комментарий..." ref="addInput" v-model="commentText")
     .comment-add__icon.photo
       simple-svg(:filepath="'/static/img/photo.svg'")
     .comment-add__icon.add
@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 export default {
   name: 'CommentAdd',
   props: {
@@ -18,22 +18,20 @@ export default {
     id: [Number, String],
     parentId: Number
   },
-  data: () => ({
-    text: ''
-  }),
   computed: {
-    ...mapGetters('profile/info', ['getInfo'])
+    ...mapGetters('profile/info', ['getInfo']),
+    commentText: {
+      get() {
+        return this.value
+      },
+      set(value) {
+        this.$emit('input', value)
+      }
+    }
   },
   methods: {
-    ...mapActions('profile/comments', ['newComment']),
     onSubmitComment() {
-      this.newComment({
-        post_id: this.id,
-        parent_id: this.parentId || null,
-        text: this.text
-      }).then(() => {
-        this.text = ''
-      })
+      this.$emit('submited')
     }
   }
 }

@@ -1,9 +1,14 @@
 <template lang="pug">
   .comment-main
+    .edit.edit--small(v-if="edit || deleted")
+      .edit__icon(v-if="deleted" @click="onDeleteComment")
+        simple-svg(:filepath="'/static/img/delete-news.svg'")
+      .edit__icon(v-if="edit" @click="editComment")
+        simple-svg(:filepath="'/static/img/edit.svg'")
     router-link.comment-main__pic(:to="{name: 'ProfileId', params: {id: info.author.id}}")
       img(:src="info.author.photo" :alt="info.author.first_name")
     .comment-main__main
-      router-link.comment-main__author(:to="{name: 'ProfileId', params: {id: info.id}}") {{info.author.first_name + ' ' + info.author.last_name}}
+      router-link.comment-main__author(:to="{name: 'ProfileId', params: {id: info.author.id}}") {{info.author.first_name + ' ' + info.author.last_name}}
       p.comment-main__text {{info.comment_text}}
       .comment-main__actions
         span.comment-main__time {{info.time | moment('from') }}
@@ -19,15 +24,31 @@ export default {
   name: 'CommentMain',
   props: {
     admin: Boolean,
-    info: Object
+    info: Object,
+    edit: Boolean,
+    deleted: Boolean
   },
   components: { LikeComment },
   methods: {
     ...mapActions('global/likes', ['putLike', 'deleteLike']),
+    ...mapActions('profile/comments', ['deleteComment']),
     likeAction(id, post_id, active) {
       active
         ? this.deleteLike({ item_id: id, post_id, type: 'Comment' })
         : this.putLike({ item_id: id, post_id, type: 'Comment' })
+    },
+    onDeleteComment() {
+      this.deleteComment({
+        id: this.info.id,
+        post_id: this.info.post_id
+      })
+    },
+    editComment() {
+      this.$emit('edit-comment', {
+        id: this.info.id,
+        commentText: this.info.comment_text,
+        parentId: this.info.parent_id || null
+      })
     }
   }
 }
@@ -39,6 +60,7 @@ export default {
 .comment-main {
   display: flex;
   font-size: 13px;
+  position: relative;
 }
 
 .comment-main__pic {

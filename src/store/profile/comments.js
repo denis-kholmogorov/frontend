@@ -39,6 +39,52 @@ export default {
           post_id: payload.post_id
         })
       }).catch(() => {})
+    },
+    async editComment({
+      dispatch
+    }, payload) {
+      await axios({
+        url: `post/${payload.post_id}/comments/${payload.id}`,
+        method: 'PUT',
+        data: {
+          comment_text: payload.text
+        }
+      }).then(() => {
+        dispatch('commentsById', {
+          post_id: payload.post_id
+        })
+      }).catch(() => {})
+    },
+    async deleteComment({
+      dispatch
+    }, payload) {
+      await axios({
+        url: `post/${payload.post_id}/comments/${payload.id}`,
+        method: 'Delete'
+      }).then(() => {
+        dispatch('commentsById', {
+          post_id: payload.post_id
+        })
+      }).catch(() => {})
+    },
+    async recoverComment({
+      dispatch
+    }, payload) {
+      await axios({
+        url: `post/${payload.post_id}/comments/${payload.id}/recover`,
+        method: 'Delete'
+      }).then(() => {
+        dispatch('commentsById', {
+          post_id: payload.post_id
+        })
+      }).catch(() => {})
+    },
+    async commentActions({
+      dispatch
+    }, payload) {
+      payload.edit 
+        ? await dispatch('editComment', payload) 
+        : await dispatch('newComment', payload)
     }
   }
 }

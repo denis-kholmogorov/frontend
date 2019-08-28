@@ -3,8 +3,13 @@
     .inner-page__main
       .news__add
         news-add(user)
-      .news__list
-        news-block(v-for="feed in getFeeds" :key="feed.id" :info="feed")
+      .news__list(v-if="getInfo")
+        news-block(
+          v-for="feed in getFeeds" 
+          :key="feed.id" :info="feed" 
+          :edit="getInfo.id === feed.author.id" 
+          :deleted="getInfo.id === feed.author.id"
+        )
     .inner-page__aside
       friends-possible
  </template>
@@ -18,7 +23,8 @@ export default {
   name: 'News',
   components: { FriendsPossible, NewsBlock, NewsAdd },
   computed: {
-    ...mapGetters('profile/feeds', ['getFeeds'])
+    ...mapGetters('profile/feeds', ['getFeeds']),
+    ...mapGetters('profile/info', ['getInfo'])
   },
   methods: {
     ...mapActions('profile/feeds', ['apiFeeds'])

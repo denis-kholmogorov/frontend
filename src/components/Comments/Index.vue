@@ -4,12 +4,21 @@
       span Комментарии ({{info.length}})
       a.comments__show(@click.prevent="showComments" href="#" v-if="info.length > 1") {{showText}}
     .comments__list
-      comment-block(:admin="admin" v-for="i in info" :key="i.id" :info="i")
+      comment-block(
+        :admin="admin" 
+        v-for="i in info" 
+        :key="i.id" 
+        :info="i" 
+        :edit="edit" 
+        :deleted="deleted" 
+        @edit-comment="onEditMain"
+      )
       .comments__add(v-if="!admin")
-        comment-add(ref="addComment" :id="id")
+        comment-add(ref="addComment" :id="id" v-model="commentText" @submited="onSubmitComment")
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import CommentBlock from '@/components/Comments/Block'
 import CommentAdd from '@/components/Comments/Add'
 export default {
@@ -17,12 +26,16 @@ export default {
   props: {
     admin: Boolean,
     info: Array,
-    id: Number
+    id: Number,
+    edit: Boolean,
+    deleted: Boolean
   },
   components: { CommentBlock, CommentAdd },
   data: () => ({
     isOpenComments: false,
-    comment: ''
+    commentText: '',
+    commentEdit: false,
+    commentEditInfo: null
   }),
   computed: {
     showText() {
@@ -30,8 +43,27 @@ export default {
     }
   },
   methods: {
+    ...mapActions('profile/comments', ['commentActions']),
     showComments() {
       this.isOpenComments = !this.isOpenComments
+    },
+    onEditMain({ commentInfo, commentText }) {
+      this.commentEdit = true
+      this.commentText = commentText
+      this.commentEditInfo = commentInfo
+      this.$refs.addComment.$refs.addInput.focus()
+    },
+    onSubmitComment() {
+      this.commentActions({
+        edit: this.commentEdit,
+        post_id: this.commentEditInfo.post_id,
+        text: this.commentText,
+        id: this.commentEditInfo.id
+      }).then(() => {
+        this.commentText = ''
+        this.commentEdit = false
+        this.commentEditInfo = null
+      })
     }
   }
 }

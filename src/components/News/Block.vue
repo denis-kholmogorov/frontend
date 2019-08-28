@@ -3,8 +3,11 @@
     add-form(v-if="isEditNews" :info="info" edit :deffered="deffered" @submit-complete="toggleEditNews")
     template(v-else)
       template(v-if="!admin")
-        .edit(v-if="edit" @click="toggleEditNews")
-          simple-svg(:filepath="'/static/img/edit.svg'")
+        .edit
+          .edit__icon(v-if="deleted" @click="deleteNews")
+            simple-svg(:filepath="'/static/img/delete-news.svg'")
+          .edit__icon(v-if="edit" @click="toggleEditNews")
+            simple-svg(:filepath="'/static/img/edit.svg'")
       template(v-else)
         .edit(v-tooltip.bottom="'Разблокировать'" v-if="blocked")
           simple-svg(:filepath="'/static/img/unblocked.svg'")
@@ -33,12 +36,18 @@
         .news-block__actions-block
           like-comment(:quantity="info.comments.length" width="16px" height="16px" font-size="15px" comment)
       .news-block__comments(v-if="!deffered")
-        comments(:admin="admin" :info="info.comments" :id="info.id")
+        comments(
+          :admin="admin" 
+          :info="info.comments" 
+          :id="info.id" 
+          :edit="edit" 
+          :deleted="deleted"
+        )
 </template>
 
 <script>
 import AddForm from '@/components/News/AddForm'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import moment from 'moment'
 import Comments from '@/components/Comments'
 import LikeComment from '@/components/LikeComment'
@@ -62,15 +71,20 @@ export default {
     edit: Boolean,
     deffered: Boolean,
     admin: Boolean,
-    blocked: Boolean
+    blocked: Boolean,
+    deleted: Boolean
   },
   data: () => ({
     isLotText: false,
     openText: false,
     isEditNews: false
   }),
+  computed: {
+    ...mapGetters('profile/info', ['getInfo'])
+  },
   methods: {
     ...mapActions('global/likes', ['putLike', 'deleteLike']),
+    ...mapActions('profile/feeds', ['deleteFeeds']),
     toggleText() {
       this.openText = !this.openText
     },
@@ -86,6 +100,13 @@ export default {
     },
     toggleEditNews() {
       this.isEditNews = !this.isEditNews
+    },
+    deleteNews() {
+      this.deleteFeeds({
+        id: this.getInfo.id,
+        post_id: this.info.id,
+        route: this.$route.name
+      })
     }
   },
   mounted() {

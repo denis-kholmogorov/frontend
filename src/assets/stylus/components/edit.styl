@@ -1,11 +1,28 @@
 .edit
-  width 20px
-  height 20px
   position absolute
   top 40px
   right 40px
-  cursor pointer
   z-index 10
+  display flex
+  align-items center
+  &--small
+    top 0
+    right 0
+    .edit__icon
+      width 10px
+      height 10px
+    .edit__icon + .edit__icon
+      margin-left 5px
   @media (max-width breakpoint-xxl) 
     top 20px
     right 20px
+    &--small
+      top 0
+      right 0
+
+.edit__icon
+  width 20px
+  height 20px
+  cursor pointer
+  &+&
+    margin-left 10px

@@ -5,12 +5,35 @@
         simple-svg(:filepath="'/static/img/unblocked.svg'")
       .edit(v-tooltip.bottom="'Заблокировать'" v-else)
         simple-svg(:filepath="'/static/img/blocked.svg'")
-    comment-main(:admin="admin" @answer-comment="onAnswerMain" :info="info")
+    comment-main(
+      :admin="admin" 
+      :info="info" 
+      :edit="edit" 
+      :deleted="deleted" 
+      @answer-comment="onAnswerMain" 
+      @edit-comment="onEditMain"
+    )
     .comment-block__reviews
       a.comment-block__reviews-show(href="#" v-if="!isShowSubComments && info.sub_comments.length > 0" @click.prevent="showSubComments") показать {{info.sub_comments.length}} {{answerText}}
       .comment-block__reviews-list(v-else)
-        comment-main(:admin="admin" @answer-comment="onAnswerSub" v-for="i in info.sub_comments" :key="i.id" :info="i")
-        comment-add(v-if="!admin" ref="addComment" :id="info.post_id" :parent-id="info.parent_id")
+        comment-main(
+          :admin="admin" 
+          v-for="i in info.sub_comments" 
+          :key="i.id" 
+          :info="i"  
+          :edit="true" 
+          :deleted="deleted"  
+          @answer-comment="onAnswerSub" 
+          @edit-comment="onEditSub"
+        )
+        comment-add(
+          v-if="!admin" 
+          ref="addComment" 
+          :id="info.post_id" 
+          :parent-id="info.parent_id"  
+          v-model="commentText" 
+          @submited="onSubmitComment"
+        )
 </template>
 
 <script>
@@ -22,12 +45,17 @@ export default {
   props: {
     admin: Boolean,
     blocked: Boolean,
-    info: Object
+    info: Object,
+    edit: Boolean,
+    deleted: Boolean
   },
   components: { CommentMain, CommentAdd },
   data: () => ({
     isShowSubComments: false,
-    comment: ''
+    commentText: '',
+    commentEdit: false,
+    commentEditId: null,
+    commentEditParentId: null
   }),
   computed: {
     answerText() {
@@ -36,7 +64,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('profile/comments', ['newComment']),
+    ...mapActions('profile/comments', ['commentActions']),
     showSubComments() {
       this.isShowSubComments = true
     },
@@ -46,6 +74,33 @@ export default {
     onAnswerMain() {
       this.showSubComments()
       this.$nextTick(() => this.onAnswerSub())
+    },
+    onEditMain({ commentText }) {
+      this.$emit('edit-comment', {
+        commentInfo: this.info,
+        commentText
+      })
+    },
+    onEditSub({ parentId, id, commentText }) {
+      this.commentEdit = true
+      this.commentText = commentText
+      this.commentEditId = id
+      this.commentEditParentId = parentId
+      this.onAnswerSub()
+    },
+    onSubmitComment() {
+      this.commentActions({
+        edit: this.commentEdit,
+        post_id: this.info.post_id,
+        parent_id: this.commentEditParentId,
+        text: this.commentText,
+        id: this.commentEditId
+      }).then(() => {
+        this.commentText = ''
+        this.commentEdit = false
+        this.commentEditInfo = null
+        this.commentEditParentId = null
+      })
     }
   }
 }
