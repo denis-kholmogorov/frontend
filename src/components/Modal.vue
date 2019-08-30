@@ -20,6 +20,9 @@ export default {
   computed: {
     isDisplay() {
       return this.value
+    },
+    scrollBarWidth() {
+      return window.innerWidth - document.documentElement.clientWidth
     }
   },
   watch: {

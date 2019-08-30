@@ -6,13 +6,13 @@ export default {
   actions: {
     async commentsById({
       commit
-    }, payload) {
+    }, post_id) {
       await axios({
-        url: `post/${payload.post_id}/comments`,
+        url: `post/${post_id}/comments`,
         method: 'GET'
       }).then(response => {
         let dataComments = {
-          post_id: payload.post_id,
+          post_id,
           value: response.data.data
         }
         router.history.current.name === 'News' ?
@@ -35,9 +35,7 @@ export default {
           comment_text: payload.text
         }
       }).then(() => {
-        dispatch('commentsById', {
-          post_id: payload.post_id
-        })
+        dispatch('commentsById', payload.post_id)
       }).catch(() => {})
     },
     async editComment({
@@ -50,9 +48,7 @@ export default {
           comment_text: payload.text
         }
       }).then(() => {
-        dispatch('commentsById', {
-          post_id: payload.post_id
-        })
+        dispatch('commentsById', payload.post_id)
       }).catch(() => {})
     },
     async deleteComment({
@@ -62,9 +58,7 @@ export default {
         url: `post/${payload.post_id}/comments/${payload.id}`,
         method: 'Delete'
       }).then(() => {
-        dispatch('commentsById', {
-          post_id: payload.post_id
-        })
+        dispatch('commentsById', payload.post_id)
       }).catch(() => {})
     },
     async recoverComment({
@@ -74,9 +68,7 @@ export default {
         url: `post/${payload.post_id}/comments/${payload.id}/recover`,
         method: 'Delete'
       }).then(() => {
-        dispatch('commentsById', {
-          post_id: payload.post_id
-        })
+        dispatch('commentsById', payload.post_id)
       }).catch(() => {})
     },
     async commentActions({

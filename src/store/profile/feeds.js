@@ -10,7 +10,8 @@ export default {
   },
   mutations: {
     setFeeds: (s, feeds) => s.feeds = feeds,
-    setCommentsById: (s, payload) => s.feeds[s.feeds.indexOf(s.feeds.find(el => el.id === payload.id))].comments = payload.value
+    setCommentsById: (s, payload) => s.feeds[s.feeds.indexOf(s.feeds.find(el => el.id === payload.id))].comments = payload.value,
+    setFeedsById: (s, payload) => s.feeds[s.feeds.indexOf(s.feeds.find(el => el.id === payload.id))] = payload
   },
   actions: {
     async apiFeeds({
@@ -26,6 +27,17 @@ export default {
       }).then(response => {
         console.log("TCL: apiFeeds -> response", response)
         commit('setFeeds', response.data.data)
+      }).catch(() => {})
+    },
+    async apiFeedsById({
+      commit
+    }, post_id) {
+      await axios({
+        url: `post/${post_id}`,
+        method: 'GET'
+      }).then(response => {
+        console.log("TCL: apiFeeds -> response", response)
+        commit('setFeedsById', response.data)
       }).catch(() => {})
     },
     async actionsFeed({

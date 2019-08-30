@@ -52,7 +52,6 @@ export default {
         url: `users/${id}`,
         method: 'GET'
       }).then(response => {
-        console.log("TCL: profile response", response)
         commit('setInfo', response.data.data)
       }).catch(error => {})
     },
@@ -63,7 +62,6 @@ export default {
         url: `users/${id}/wall${offset ? '?offset='+offset : ''}${itemPerPage ? '&itemPerPage='+itemPerPage : ''}`,
         method: 'GET'
       }).then(response => {
-        console.log("TCL: apiWall response", response.data.data)
         commit('setWall', response.data.data)
       }).catch(error => {})
     },

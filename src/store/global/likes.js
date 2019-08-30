@@ -1,4 +1,5 @@
 import axios from 'axios'
+import router from '@/router'
 
 export default {
   namespaced: true,
@@ -9,11 +10,7 @@ export default {
         method: 'PUT',
         data
       }).then(response => {
-        data.type === 'Post' ? dispatch('users/info/apiWallById', data.item_id, {
-          root: true
-        }) : dispatch('users/info/apiCommentsById', data.post_id, {
-          root: true
-        })
+        dispatch('likeAction', data)
       }).catch(error => {})
     },
     async deleteLike({
@@ -24,12 +21,23 @@ export default {
         method: 'DELETE',
         data
       }).then(response => {
-        data.type === 'Post' ? dispatch('users/info/apiWallById', data.item_id, {
-          root: true
-        }) : dispatch('users/info/apiCommentsById', data.post_id, {
+        dispatch('likeAction', data)
+      }).catch(error => {})
+    },
+    async likeAction({ dispatch }, data) {
+      if (data.type === 'Post') {
+        router.history.current.name === 'News' 
+          ? dispatch('profile/feeds/apiFeedsById', data.item_id, {
+            root: true
+          }) 
+          : dispatch('users/info/apiWallById', data.item_id, {
+            root: true
+          }) 
+      } else {
+        dispatch('profile/comments/commentsById', data.post_id, {
           root: true
         })
-      }).catch(error => {})
+      }
     }
   }
 }
