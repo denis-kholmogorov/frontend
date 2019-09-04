@@ -14,7 +14,7 @@
         span.comment-main__time {{info.time | moment('from') }}
         template(v-if="!admin")
           a.comment-main__review(href="#" @click.prevent="$emit('answer-comment')") Ответить
-          like-comment(fill :active="info.my_like" @click.native="likeAction(info.id, info.post_id, info.my_like)")
+          like-comment(fill :active="info.my_like" @click.native="likeAction(info.id, info.post_id, info.my_like)" :id="info.id")
 </template>
 
 <script>

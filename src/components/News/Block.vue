@@ -19,7 +19,7 @@
         router-link.news-block__author-pic(:to="{name: 'ProfileId', params: {id: info.author.id}}")
           img(:src="info.author.photo" :alt="info.author.first_name")
         .news-block__author-info
-          router-link.news-block__author-name(:to="{name: 'ProfileId', params: {id: info.id}}") {{info.author.first_name + ' ' + info.author.last_name}}
+          router-link.news-block__author-name(:to="{name: 'ProfileId', params: {id: info.author.id}}") {{info.author.first_name + ' ' + info.author.last_name}}
           span.news-block__author-time {{info.time | moment("from")}}
       .news-block__content
         .news-block__content-main
@@ -32,7 +32,15 @@
           li.news-block__content-tag(v-for="(tag,index) in info.tags" :key="index") {{'#'+tag}}
       .news-block__actions(v-if="!deffered && !admin")
         .news-block__actions-block
-          like-comment(:quantity="info.likes" width="16px" height="16px" font-size="15px" @click.native="likeAction(info.id, info.my_like)" :active="info.my_like")
+          like-comment(
+            :quantity="info.likes" 
+            width="16px" 
+            height="16px" 
+            font-size="15px" 
+            @click.native="likeAction(info.id, info.my_like)" 
+            :active="info.my_like"
+            :id="info.id"
+          )
         .news-block__actions-block
           like-comment(:quantity="info.comments.length" width="16px" height="16px" font-size="15px" comment)
       .news-block__comments(v-if="!deffered")

@@ -27,6 +27,7 @@ export default {
     async newComment({
       dispatch
     }, payload) {
+      console.log("TCL: payload", payload)
       await axios({
         url: `post/${payload.post_id}/comments`,
         method: 'POST',

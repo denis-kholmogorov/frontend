@@ -9,8 +9,8 @@
         v-for="i in info" 
         :key="i.id" 
         :info="i" 
-        :edit="edit" 
-        :deleted="deleted" 
+        :edit="getInfo.id === i.author.id" 
+        :deleted="getInfo.id === i.author.id" 
         @edit-comment="onEditMain"
       )
       .comments__add(v-if="!admin")
@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import CommentBlock from '@/components/Comments/Block'
 import CommentAdd from '@/components/Comments/Add'
 export default {
@@ -38,6 +38,7 @@ export default {
     commentEditInfo: null
   }),
   computed: {
+    ...mapGetters('profile/info', ['getInfo']),
     showText() {
       return this.isOpenComments ? 'скрыть' : 'показать'
     }
@@ -56,9 +57,9 @@ export default {
     onSubmitComment() {
       this.commentActions({
         edit: this.commentEdit,
-        post_id: this.commentEditInfo.post_id,
+        post_id: this.info.id,
         text: this.commentText,
-        id: this.commentEditInfo.id
+        id: this.commentEdit ? this.commentEditInfo.id : ''
       }).then(() => {
         this.commentText = ''
         this.commentEdit = false

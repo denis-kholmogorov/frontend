@@ -1,7 +1,12 @@
 <template lang="pug">
   .like-comment(:class="{active, fill}")
-    simple-svg(:filepath="`/static/img/${currentIcon}.svg`" :width="width" :height="height")
-    span(v-if="quantity >= 1" :style="{'font-size': fontSize}") {{quantity}}
+    template(v-if="comment")
+      simple-svg(:filepath="'/static/img/comment.svg'" :width="width" :height="height")
+      span(v-if="quantity >= 1" :style="{'font-size': fontSize}") {{quantity}}
+    .like-comment__checkbox(v-else)
+      input(type="checkbox" :checked="active" :id="id")
+      label(:for="id" :style="{'font-size': fontSize}")
+        template(v-if="quantity >= 1") {{quantity}}
 </template>
 
 <script>
@@ -23,7 +28,8 @@ export default {
       type: String,
       default: '12px'
     },
-    comment: Boolean
+    comment: Boolean,
+    id: Number
   },
   computed: {
     currentIcon() {
@@ -95,6 +101,36 @@ export default {
     font-weight: 600;
     color: #AEAEBD;
     margin-left: 5px;
+  }
+}
+
+.like-comment__checkbox {
+  input {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+
+    &:checked {
+      & + label {
+        background-image: url('/static/img/like-active.svg');
+        color: wild-watermelon;
+      }
+    }
+  }
+
+  label {
+    width: 18px;
+    height: 16px;
+    display: block;
+    background: url('/static/img/like.svg') center no-repeat;
+    background-size: 18px;
+    padding-left: 25px;
+    font-weight: 600;
+    color: #AEAEBD;
+    cursor: pointer;
   }
 }
 </style>

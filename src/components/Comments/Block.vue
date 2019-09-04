@@ -21,7 +21,7 @@
           v-for="i in info.sub_comments" 
           :key="i.id" 
           :info="i"  
-          :edit="true" 
+          :edit="edit" 
           :deleted="deleted"  
           @answer-comment="onAnswerSub" 
           @edit-comment="onEditSub"
@@ -92,7 +92,7 @@ export default {
       this.commentActions({
         edit: this.commentEdit,
         post_id: this.info.post_id,
-        parent_id: this.commentEditParentId,
+        parent_id: this.commentEdit ? this.commentEditParentId : this.info.parent_id,
         text: this.commentText,
         id: this.commentEditId
       }).then(() => {
