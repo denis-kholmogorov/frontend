@@ -4,9 +4,9 @@
       simple-svg(:filepath="'/static/img/comment.svg'" :width="width" :height="height")
       span(v-if="quantity >= 1" :style="{'font-size': fontSize}") {{quantity}}
     .like-comment__checkbox(v-else)
-      input(type="checkbox" :checked="active" :id="id")
+      input(type="checkbox" :checked="active" :id="id" @change="onChange")
       label(:for="id" :style="{'font-size': fontSize}")
-        template(v-if="quantity >= 1") {{quantity}}
+        template(v-if="localQuantity >= 1") {{localQuantity}}
 </template>
 
 <script>
@@ -31,10 +31,28 @@ export default {
     comment: Boolean,
     id: Number
   },
-  computed: {
-    currentIcon() {
-      return this.comment ? 'comment' : 'like'
+  data: () => ({
+    localQuantity: null,
+    localActive: null
+  }),
+  watch: {
+    quantity(val) {
+      this.localQuantity = val
+    },
+    active(val) {
+      this.localActive = val
     }
+  },
+  methods: {
+    onChange() {
+      this.localActive ? this.localQuantity-- : this.localQuantity++
+      this.localActive = !this.localActive
+      this.$emit('liked')
+    }
+  },
+  mounted() {
+    this.localQuantity = this.quantity
+    this.localActive = this.active
   }
 }
 </script>

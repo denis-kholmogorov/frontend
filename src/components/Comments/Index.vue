@@ -57,7 +57,7 @@ export default {
     onSubmitComment() {
       this.commentActions({
         edit: this.commentEdit,
-        post_id: this.info.id,
+        post_id: this.id,
         text: this.commentText,
         id: this.commentEdit ? this.commentEditInfo.id : ''
       }).then(() => {

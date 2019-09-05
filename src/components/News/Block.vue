@@ -36,8 +36,8 @@
             :quantity="info.likes" 
             width="16px" 
             height="16px" 
-            font-size="15px" 
-            @click.native="likeAction(info.id, info.my_like)" 
+            font-size="15px"
+            @liked="likeAction(info.id, info.my_like)" 
             :active="info.my_like"
             :id="info.id"
           )
@@ -104,6 +104,7 @@ export default {
       })
     },
     likeAction(id, active) {
+      console.log('hi')
       active ? this.deleteLike({ item_id: id, type: 'Post' }) : this.putLike({ item_id: id, type: 'Post' })
     },
     toggleEditNews() {

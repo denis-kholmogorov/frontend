@@ -27,12 +27,12 @@ export default {
     async newComment({
       dispatch
     }, payload) {
-      console.log("TCL: payload", payload)
+      console.log("TCL: newComment", payload)
       await axios({
         url: `post/${payload.post_id}/comments`,
         method: 'POST',
         data: {
-          parent_id: payload.parent_id || null,
+          parent_id: payload.parent_id,
           comment_text: payload.text
         }
       }).then(() => {
@@ -42,6 +42,7 @@ export default {
     async editComment({
       dispatch
     }, payload) {
+      console.log("TCL: editComment", payload)
       await axios({
         url: `post/${payload.post_id}/comments/${payload.id}`,
         method: 'PUT',
