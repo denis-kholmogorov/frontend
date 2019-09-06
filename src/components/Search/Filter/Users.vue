@@ -23,16 +23,16 @@
     .search-filter__block.region
       label.search__label Регион:
       .search__row
-        select.select.search-filter__select(v-model.number="country_id")
+        select.select.search-filter__select(v-model="country")
           option(value="null" disabled) Страна
-          option(value="1") Россия
-          option(value="2") Англия
-          option(value="3") США
-        select.select.search-filter__select(v-model.number="city_id")
+          option Россия
+          option Англия
+          option США
+        select.select.search-filter__select(v-model="city")
           option(value="null" disabled) Город
-          option(value="1") Москва
-          option(value="2") Лондон
-          option(value="3") Техас
+          option Москва
+          option Лондон
+          option Техас
     .search-filter__block.btn-news(@click.prevent="onSearchUsers")
       button-hover Применить
 </template>
@@ -46,16 +46,16 @@ export default {
     last_name: null,
     age_from: null,
     age_to: null,
-    country_id: null,
-    city_id: null,
+    country: null,
+    city: null,
     offset: 0,
     itemPerPage: 20
   }),
   methods: {
     ...mapActions('global/search', ['searchUsers']),
     onSearchUsers() {
-      let { first_name, last_name, age_from, age_to, country_id, city_id } = this
-      this.searchUsers({ first_name, last_name, age_from, age_to, country_id, city_id })
+      let { first_name, last_name, age_from, age_to, country, city } = this
+      this.searchUsers({ first_name, last_name, age_from, age_to, country, city })
     }
   }
 }

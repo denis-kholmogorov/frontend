@@ -5,7 +5,7 @@
     .friends-block__info
       router-link.friends-block__name(:to="{name: 'ProfileId', params: {id: info.id}}") {{info.first_name}} {{info.last_name}}
       span.friends-block__age-city(v-if="moderator") модератор
-      span.friends-block__age-city(v-else) {{info.birth_date | moment('from', true)}}, {{info.city.title}}
+      span.friends-block__age-city(v-else) {{info.birth_date | moment('from', true)}}, {{info.city}}
     .friends-block__actions
       template(v-if="moderator")
         .friends-block__actions-block(v-tooltip.bottom="'Редактировать'")
