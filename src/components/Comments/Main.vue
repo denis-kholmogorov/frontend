@@ -14,7 +14,7 @@
         span.comment-main__time {{info.time | moment('from') }}
         template(v-if="!admin")
           a.comment-main__review(href="#" @click.prevent="$emit('answer-comment')") Ответить
-          like-comment(fill :active="info.my_like" @click.native="likeAction(info.id, info.post_id, info.my_like)" :id="info.id")
+          like-comment(fill :active="info.my_like" @click.native="likeAction" :id="info.id")
 </template>
 
 <script>
@@ -32,10 +32,10 @@ export default {
   methods: {
     ...mapActions('global/likes', ['putLike', 'deleteLike']),
     ...mapActions('profile/comments', ['deleteComment']),
-    likeAction(id, post_id, active) {
+    likeAction(active) {
       active
-        ? this.deleteLike({ item_id: id, post_id, type: 'Comment' })
-        : this.putLike({ item_id: id, post_id, type: 'Comment' })
+        ? this.deleteLike({ item_id: this.info.id, post_id: this.info.post_id, type: 'Comment' })
+        : this.putLike({ item_id: this.info.id, post_id: this.info.post_id, type: 'Comment' })
     },
     onDeleteComment() {
       this.deleteComment({

@@ -37,7 +37,7 @@
             width="16px" 
             height="16px" 
             font-size="15px"
-            @liked="likeAction(info.id, info.my_like)" 
+            @liked="likeAction" 
             :active="info.my_like"
             :id="info.id"
           )
@@ -103,9 +103,10 @@ export default {
         sameElse: `[через ${timePost.diff(now, 'days')} дней, ${timePost.diff(now, 'hours') % 24} часа]`
       })
     },
-    likeAction(id, active) {
-      console.log('hi')
-      active ? this.deleteLike({ item_id: id, type: 'Post' }) : this.putLike({ item_id: id, type: 'Post' })
+    likeAction(active) {
+      active
+        ? this.deleteLike({ item_id: this.info.id, type: 'Post' })
+        : this.putLike({ item_id: this.info.id, type: 'Post' })
     },
     toggleEditNews() {
       this.isEditNews = !this.isEditNews
