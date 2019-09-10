@@ -45,9 +45,9 @@ export default {
   },
   methods: {
     onChange() {
+      this.$emit('liked', this.localActive)
       this.localActive ? this.localQuantity-- : this.localQuantity++
       this.localActive = !this.localActive
-      this.$emit('liked', this.localActive)
     }
   },
   mounted() {

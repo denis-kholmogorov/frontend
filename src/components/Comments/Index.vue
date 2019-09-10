@@ -1,9 +1,9 @@
 <template lang="pug">
   .comments(:class="{open: isOpenComments, 'comments--admin': admin}")
     h4.comments__title
-      span Комментарии ({{info.length}})
+      span Комментарии ({{commentsLength}})
       a.comments__show(@click.prevent="showComments" href="#" v-if="info.length > 1") {{showText}}
-    .comments__list
+    .comments__list(v-if="getInfo")
       comment-block(
         :admin="admin" 
         v-for="i in info" 
@@ -41,6 +41,17 @@ export default {
     ...mapGetters('profile/info', ['getInfo']),
     showText() {
       return this.isOpenComments ? 'скрыть' : 'показать'
+    },
+    commentsLength() {
+      let result = 0
+      this.info.map(el => {
+        result++
+        el.sub_comments &&
+          el.sub_comments.map(() => {
+            result++
+          })
+      })
+      return result
     }
   },
   methods: {

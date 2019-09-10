@@ -27,7 +27,6 @@ export default {
     async newComment({
       dispatch
     }, payload) {
-      console.log("TCL: newComment", payload)
       await axios({
         url: `post/${payload.post_id}/comments`,
         method: 'POST',
@@ -42,7 +41,6 @@ export default {
     async editComment({
       dispatch
     }, payload) {
-      console.log("TCL: editComment", payload)
       await axios({
         url: `post/${payload.post_id}/comments/${payload.id}`,
         method: 'PUT',

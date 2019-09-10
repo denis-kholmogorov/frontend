@@ -1,5 +1,6 @@
 import axios from 'axios'
 import moment from 'moment'
+import router from '@/router'
 
 export default {
   namespaced: true,
@@ -41,7 +42,11 @@ export default {
     setInfo: (s, info) => s.info = info,
     setWall: (s, wall) => s.wall = wall,
     setWallById: (s, payload) => s.wall[s.wall.indexOf(s.wall.find(el => el.id === payload.id))] = payload.value,
-    setCommentsById: (s, payload) => s.wall[s.wall.indexOf(s.wall.find(el => el.id === payload.id))].comments = payload.value,
+    setCommentsById: (s, payload) => {
+      s.wall[s.wall.indexOf(s.wall.find(el => el.id === payload.post_id))].comments = payload.value
+      s.wall.push('dog-nail')
+      s.wall.splice(1,-1)
+    },
     setUsersInfo: (s, info) => s.users = info
   },
   actions: {

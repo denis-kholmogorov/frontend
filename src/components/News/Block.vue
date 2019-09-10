@@ -42,12 +42,12 @@
             :id="info.id"
           )
         .news-block__actions-block
-          like-comment(:quantity="info.comments.length" width="16px" height="16px" font-size="15px" comment)
+          like-comment(:quantity="commentsLength" width="16px" height="16px" font-size="15px" comment)
       .news-block__comments(v-if="!deffered")
         comments(
           :admin="admin" 
           :info="info.comments" 
-          :id="info.id" 
+          :id="info.id"
           :edit="edit" 
           :deleted="deleted"
         )
@@ -88,7 +88,18 @@ export default {
     isEditNews: false
   }),
   computed: {
-    ...mapGetters('profile/info', ['getInfo'])
+    ...mapGetters('profile/info', ['getInfo']),
+    commentsLength() {
+      let result = 0
+      this.info.comments.map(el => {
+        result++
+        el.sub_comments &&
+          el.sub_comments.map(() => {
+            result++
+          })
+      })
+      return result
+    }
   },
   methods: {
     ...mapActions('global/likes', ['putLike', 'deleteLike']),

@@ -4,7 +4,8 @@ import router from '@/router'
 export default {
   namespaced: true,
   actions: {
-    async putLike({}, data) {
+    async putLike({ dispatch }, data) {
+      console.log("TCL: putLike -> data", data)
       await axios({
         url: 'likes',
         method: 'PUT',
@@ -16,6 +17,7 @@ export default {
     async deleteLike({
       dispatch
     }, data) {
+      console.log("TCL: deleteLike -> data", data)
       await axios({
         url: `likes?item_id=${data.item_id}&type=${data.type}`,
         method: 'DELETE',
