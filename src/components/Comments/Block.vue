@@ -13,7 +13,7 @@
       @answer-comment="onAnswerMain" 
       @edit-comment="onEditMain"
     )
-    .comment-block__reviews
+    .comment-block__reviews(v-if="!info.is_deleted")
       a.comment-block__reviews-show(href="#" v-if="!isShowSubComments && info.sub_comments.length > 0" @click.prevent="showSubComments") показать {{info.sub_comments.length}} {{answerText}}
       .comment-block__reviews-list(v-else)
         comment-main(

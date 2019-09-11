@@ -92,10 +92,10 @@ export default {
     commentsLength() {
       let result = 0
       this.info.comments.map(el => {
-        result++
+        !el.is_deleted && result++
         el.sub_comments &&
-          el.sub_comments.map(() => {
-            result++
+          el.sub_comments.map(subEl => {
+            !subEl.is_deleted && result++
           })
       })
       return result
