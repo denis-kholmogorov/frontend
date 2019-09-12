@@ -35,30 +35,23 @@ export default {
   components: { LikeComment },
   methods: {
     ...mapActions('global/likes', ['putLike', 'deleteLike']),
-    ...mapActions('profile/comments', ['deleteComment', 'recoverComment']),
     likeAction(active) {
       active
         ? this.deleteLike({ item_id: this.info.id, post_id: this.info.post_id, type: 'Comment' })
         : this.putLike({ item_id: this.info.id, post_id: this.info.post_id, type: 'Comment' })
     },
     onDeleteComment() {
-      this.deleteComment({
-        id: this.info.id,
-        post_id: this.info.post_id
-      })
+      this.$emit('delete-comment', this.info.id)
     },
     editComment() {
       this.$emit('edit-comment', {
         id: this.info.id,
         commentText: this.info.comment_text,
-        parentId: this.info.parent_id || null
+        parentId: this.info.parent_id
       })
     },
     onRecoverComment() {
-      this.recoverComment({
-        id: this.info.id,
-        post_id: this.info.post_id
-      })
+      this.$emit('recover-comment', this.info.id)
     }
   }
 }

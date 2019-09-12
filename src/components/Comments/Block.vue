@@ -12,6 +12,8 @@
       :deleted="deleted" 
       @answer-comment="onAnswerMain" 
       @edit-comment="onEditMain"
+      @delete-comment="onDeleteComment"
+      @recover-comment="onRecoverComment"
     )
     .comment-block__reviews(v-if="!info.is_deleted")
       a.comment-block__reviews-show(href="#" v-if="!isShowSubComments && info.sub_comments.length > 0" @click.prevent="showSubComments") показать {{info.sub_comments.length}} {{answerText}}
@@ -21,10 +23,12 @@
           v-for="i in info.sub_comments" 
           :key="i.id" 
           :info="i"  
-          :edit="edit" 
-          :deleted="deleted"  
+          :edit="getInfo.id === i.author.id" 
+          :deleted="getInfo.id === i.author.id"  
           @answer-comment="onAnswerSub" 
           @edit-comment="onEditSub"
+          @delete-comment="onDeleteComment"
+          @recover-comment="onRecoverComment"
         )
         comment-add(
           v-if="!admin" 
@@ -39,7 +43,7 @@
 <script>
 import CommentMain from '@/components/Comments/Main'
 import CommentAdd from '@/components/Comments/Add'
-import { mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'CommentBlock',
   props: {
@@ -58,13 +62,14 @@ export default {
     commentEditParentId: null
   }),
   computed: {
+    ...mapGetters('profile/info', ['getInfo']),
     answerText() {
       if (!this.info) return 'ответ'
       return this.info.sub_comments.length > 1 ? 'ответа' : 'ответ'
     }
   },
   methods: {
-    ...mapActions('profile/comments', ['commentActions']),
+    ...mapActions('profile/comments', ['commentActions', 'deleteComment', 'recoverComment']),
     showSubComments() {
       this.isShowSubComments = true
     },
@@ -81,6 +86,18 @@ export default {
         commentText
       })
     },
+    onDeleteComment(id) {
+      this.deleteComment({
+        id,
+        post_id: this.info.post_id
+      })
+    },
+    onRecoverComment(id) {
+      this.recoverComment({
+        id,
+        post_id: this.info.post_id
+      })
+    },
     onEditSub({ parentId, id, commentText }) {
       this.commentEdit = true
       this.commentText = commentText
@@ -92,7 +109,7 @@ export default {
       this.commentActions({
         edit: this.commentEdit,
         post_id: this.info.post_id,
-        parent_id: this.commentEdit ? this.commentEditParentId : this.info.parent_id,
+        parent_id: this.commentEdit ? this.commentEditParentId : this.info.id,
         text: this.commentText,
         id: this.commentEditId
       }).then(() => {

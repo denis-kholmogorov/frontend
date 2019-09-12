@@ -39,6 +39,9 @@ export default {
     changeTab(tab) {
       this.activeTab = tab
     }
+  },
+  created() {
+    if (this.getInfo) this.apiWall({ id: this.getInfo.id })
   }
 }
 </script>
