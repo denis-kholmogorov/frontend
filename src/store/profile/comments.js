@@ -56,7 +56,7 @@ export default {
     }, payload) {
       await axios({
         url: `post/${payload.post_id}/comments/${payload.id}`,
-        method: 'Delete'
+        method: 'DELETE'
       }).then(() => {
         dispatch('commentsById', payload.post_id)
       }).catch(() => {})
@@ -66,7 +66,7 @@ export default {
     }, payload) {
       await axios({
         url: `post/${payload.post_id}/comments/${payload.id}/recover`,
-        method: 'Delete'
+        method: 'PUT'
       }).then(() => {
         dispatch('commentsById', payload.post_id)
       }).catch(() => {})

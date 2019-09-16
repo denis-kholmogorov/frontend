@@ -4,7 +4,7 @@ import store from '@/store'
 
 axios.defaults.headers['content-type'] = 'application/json';
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL = 'http://46.247.128.163:8084/api/v1/'
+axios.defaults.baseURL = 'https://virtserver.swaggerhub.com/andrewleykin/social/1.0.4/api/v1/'
 
 const token = localStorage.getItem('user-token')
 if (token) axios.defaults.headers.common['Authorization'] = token
