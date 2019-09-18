@@ -13,7 +13,7 @@ export default {
     setCommentsById: (s, payload) => {
       s.feeds[s.feeds.indexOf(s.feeds.find(el => el.id === payload.post_id))].comments = payload.value
       s.feeds.push('dog-nail')
-      s.feeds.splice(1,-1)
+      s.feeds.splice(-1,1)
     },
     setFeedsById: (s, payload) => s.feeds[s.feeds.indexOf(s.feeds.find(el => el.id === payload.id))] = payload
   },

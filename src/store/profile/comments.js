@@ -74,6 +74,7 @@ export default {
     async commentActions({
       dispatch
     }, payload) {
+      console.log("TCL: payload", payload)
       payload.edit 
         ? await dispatch('editComment', payload) 
         : await dispatch('newComment', payload)

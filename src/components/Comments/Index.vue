@@ -70,7 +70,7 @@ export default {
         edit: this.commentEdit,
         post_id: this.id,
         text: this.commentText,
-        id: this.commentEdit ? this.commentEditInfo.id : ''
+        id: this.commentEdit ? this.commentEditInfo.id : null
       }).then(() => {
         this.commentText = ''
         this.commentEdit = false

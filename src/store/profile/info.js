@@ -29,12 +29,6 @@ export default {
         url: 'users/me',
         method: 'GET'
       }).then(async response => {
-        console.log("TCL: profile apiInfo -> response", response.data.data)
-        await dispatch('users/info/apiWall', {
-          id: response.data.data.id
-        }, {
-          root: true
-        })
         commit('setInfo', response.data.data)
       }).catch(error => {})
     },

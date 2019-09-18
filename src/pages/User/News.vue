@@ -6,7 +6,8 @@
       .news__list(v-if="getInfo")
         news-block(
           v-for="feed in getFeeds" 
-          :key="feed.id" :info="feed" 
+          :key="feed.id"
+          :info="feed" 
           :edit="getInfo.id === feed.author.id" 
           :deleted="getInfo.id === feed.author.id"
         )

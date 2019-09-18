@@ -45,7 +45,7 @@ export default {
     setCommentsById: (s, payload) => {
       s.wall[s.wall.indexOf(s.wall.find(el => el.id === payload.post_id))].comments = payload.value
       s.wall.push('dog-nail')
-      s.wall.splice(1,-1)
+      s.wall.splice(-1,1)
     },
     setUsersInfo: (s, info) => s.users = info
   },
@@ -63,6 +63,7 @@ export default {
     async apiWall({
       commit
     }, {id, offset, itemPerPage}) {
+      console.log('fetch wall', id)
       await axios({
         url: `users/${id}/wall${offset ? '?offset='+offset : ''}${itemPerPage ? '&itemPerPage='+itemPerPage : ''}`,
         method: 'GET'
