@@ -47,6 +47,7 @@ export default {
     async actionsFeed({
       dispatch
     }, payload) {
+      console.log("TCL: payload", payload)
       let url = payload.edit ? `post/${payload.post_id}` : `users/${payload.id}/wall`
       let method = payload.edit ? 'PUT' : 'POST'
       if (payload.publish_date) url += '?publish_date=' + payload.publish_date

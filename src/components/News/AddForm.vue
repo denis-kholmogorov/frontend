@@ -23,7 +23,7 @@
         button-hover.news-add__planning(variant="white" bordered @click.native="openModal" v-if="!edit || deffered") Запланировать
         button-hover(@click.native="submitForm") Опубликовать
     modal.news-add__modal(v-model="modalShow")
-      v-date-picker(v-model="planingTime" title-position="left" :min-date='new Date()' is-inline :attributes='attrs' :key="componentKey")
+      v-date-picker(v-model="planingTime" @input="onChangeDatePicker" title-position="left" :min-date='new Date()' is-inline :attributes='attrs' :key="componentKey")
       .news-add__modal-selects
         select.select.news-add__modal-select.day(v-model="day" @change="changeDate")
           option(v-for="d in days" :key="d") {{d}}
@@ -75,21 +75,21 @@ export default {
       }
     ],
     day: 1,
-    month: { val: 1, text: 'Января' },
+    month: { val: 0, text: 'Января' },
     year: 2000,
     months: [
-      { val: 1, text: 'Января' },
-      { val: 2, text: 'Февраля' },
-      { val: 3, text: 'Марта' },
-      { val: 4, text: 'Апреля' },
-      { val: 5, text: 'Мая' },
-      { val: 6, text: 'Июня' },
-      { val: 7, text: 'Июля' },
-      { val: 8, text: 'Августа' },
-      { val: 9, text: 'Сентября' },
-      { val: 10, text: 'Октября' },
-      { val: 11, text: 'Ноября' },
-      { val: 12, text: 'Декабря' }
+      { val: 0, text: 'Января' },
+      { val: 1, text: 'Февраля' },
+      { val: 2, text: 'Марта' },
+      { val: 3, text: 'Апреля' },
+      { val: 4, text: 'Мая' },
+      { val: 5, text: 'Июня' },
+      { val: 6, text: 'Июля' },
+      { val: 7, text: 'Августа' },
+      { val: 8, text: 'Сентября' },
+      { val: 9, text: 'Октября' },
+      { val: 10, text: 'Ноября' },
+      { val: 11, text: 'Декабря' }
     ],
     time: '12:00',
     times: [
@@ -196,7 +196,12 @@ export default {
     },
     changeDate() {
       this.componentKey += 1
-      this.planingTime = new Date(this.year, this.month.val - 1, this.day)
+      this.planingTime = new Date(this.year, this.month.val, this.day)
+    },
+    onChangeDatePicker(value) {
+      this.day = moment(value).date()
+      this.month = this.months[moment(value).month()]
+      this.year = moment(value).year()
     }
   },
   mounted() {

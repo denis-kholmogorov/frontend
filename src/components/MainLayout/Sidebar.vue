@@ -12,7 +12,7 @@
     router-link.main-layout__link(v-if="!isAdminPage" :to="{name: 'Settings'}")
       simple-svg(:filepath="'/static/img/sidebar/settings.svg'")
       span Настройки
-    a.main-layout__link(@click.prvent="onLogout")
+    a.main-layout__link(@click.prvent="onLogout" href="#")
       simple-svg(:filepath="'/static/img/sidebar/exit.svg'")
       span Выйти
 </template>
