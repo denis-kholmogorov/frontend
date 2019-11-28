@@ -128,8 +128,8 @@ export default {
       this.month = this.months[moment(this.getInfo.birth_date).month()]
       this.year = moment(this.getInfo.birth_date).year()
       this.about = this.getInfo.about
-      this.country = this.getInfo.country.title
-      this.city = this.getInfo.city.title
+      this.country = this.getInfo.country
+      this.city = this.getInfo.city
     }
   },
   watch: {
