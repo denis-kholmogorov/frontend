@@ -3,39 +3,43 @@ import axios from 'axios'
 export default {
   namespaced: true,
   state: {
-    staticInfo: [{
+    notifications: [{
         icon: 'comments',
         name: 'О новых комментариях к моим публикациям',
-        type: 'POST_COMMENT'
+        type: 'POST_COMMENT',
+        enable: false
       },
       {
         icon: 'reviews',
         name: 'О ответах на мои комментарии',
-        type: 'COMMENT_COMMENT'
+        type: 'COMMENT_COMMENT',
+        enable: false
       },
       {
         icon: 'friends',
         name: 'О заявках в дузья',
-        type: 'FRIEND_REQUEST'
+        type: 'FRIEND_REQUEST',
+        enable: false
       },
       {
         icon: 'messages',
         name: 'О новых личных сообщениях',
-        type: 'MESSAGE'
+        type: 'MESSAGE',
+        enable: false
       },
       {
         icon: 'birthdays',
         name: 'О дне рождения друга',
-        type: 'FRIEND_BIRTHDAY'
+        type: 'FRIEND_BIRTHDAY',
+        enable: false
       }
     ],
-    notifications: []
   },
   getters: {
-    getNotificationsSettings: s => s.staticInfo.map(item => Object.assign({}, item, s.notifications.find(el => el.type === item.type)))
+    getNotificationsSettings: s => s.notifications
   },
   mutations: {
-    setNotificationsSettings: (s, notifications) => s.notifications = notifications
+    setNotificationsSettings: (s, notifications) => s.notifications.map(el => el.enable = notifications.find(n => n.type === el.type).enable)
   },
   actions: {
     async passwordRecovery({}, email) {
