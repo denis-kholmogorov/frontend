@@ -15,16 +15,20 @@
         span.user-status(:class="{online, offline: !online}") {{statusText}}
       .profile-info__block
         span.profile-info__title Дата рождения:
-        span.profile-info__val {{info.birth_date | moment("D MMMM YYYY") }} ({{info.ages}} года)
+        span.profile-info__val(v-if="info.birth_date") {{info.birth_date | moment("D MMMM YYYY") }} ({{info.ages}} года)
+        span.profile-info__val(v-else) не заполнено
       .profile-info__block
         span.profile-info__title Телефон:
-        a.profile-info__val(:href="`tel:${info.phone}`") {{info.phone | phone}}
+        a.profile-info__val(v-if="info.phone" :href="`tel:${info.phone}`") {{info.phone | phone}}
+        a.profile-info__val(v-else) не заполнено
       .profile-info__block
         span.profile-info__title Страна, город:
-        span.profile-info__val {{info.country}}, {{info.city}}
+        span.profile-info__val(v-if="info.country") {{info.country}}, {{info.city}}
+        span.profile-info__val(v-else) не заполнено
       .profile-info__block
         span.profile-info__title О себе:
-        span.profile-info__val {{info.about}}
+        span.profile-info__val(v-if="info.about") {{info.about}}
+        span.profile-info__val(v-else) не заполнено
     modal(v-model="modalShow")
       p(v-if="modalText") {{modalText}}
       template(slot="actions")
