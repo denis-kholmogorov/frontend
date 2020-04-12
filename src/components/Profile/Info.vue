@@ -122,6 +122,7 @@ export default {
       if (this.blocked) return false
       this.apiDialogs().then(() => {
         let el = this.dialogs.find(el => el.last_message.recipient.id === this.info.id)
+        console.log('Info::onSentMessage', el, this);
         el ? this.routerPushImById(el.id) : this.apiNewDialog(this.info.id).then(() => this.routerPushImById(el.id))
       })
     },
