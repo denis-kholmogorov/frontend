@@ -3,14 +3,17 @@
     .push__img
       img(:src="info.photo" :alt="info.entity_author.first_name")
     p.push__content
-      router-link.push__content-name(:to="{name: 'ProfileId', params: {id: info.entity_author.id}}") {{info.entity_author.first_name + ' ' + info.entity_author.last_name}}  
-      | {{getNotificationsTextType(info.event_type)}} 
+      router-link.push__content-name(:to="getRouteByNotification(info)")
+        | {{info.entity_author.first_name + ' ' + info.entity_author.last_name}}
+        |
+        | {{getNotificationsTextType(info.event_type)}}
       span.push__content-preview «{{info.info}}»
     span.push__time {{info.sent_time | moment('from')}}
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import { getRouteByNotification } from '@/utils/notifications.utils.js';
 export default {
   name: 'PushBlock',
   props: {
@@ -18,6 +21,9 @@ export default {
   },
   computed: {
     ...mapGetters('profile/notifications', ['getNotificationsTextType'])
+  },
+  methods: {
+    getRouteByNotification,
   }
 }
 </script>

@@ -7,15 +7,18 @@
           .push__img
             img(:src="info.entity_author.photo" :alt="info.entity_author.first_name")
           p.push__content
-            router-link.push__content-name(:to="{name: 'ProfileId', params: {id: info.entity_author.id}}") {{info.entity_author.first_name + ' ' + info.entity_author.last_name}} 
-            | {{getNotificationsTextType(info.event_type)}} 
-            span.push__content-preview «{{info.info}}»
+            router-link.push__content-name(:to="getRouteByNotification(info)")
+              | {{info.entity_author.first_name + ' ' + info.entity_author.last_name}}
+              |
+              | {{getNotificationsTextType(info.event_type)}}
+            span.push__content-preview  «{{info.info}}»
           span.push__time {{info.sent_time | moment('from')}}
-      router-link.push__btn(:to="{name: 'Push'}" v-if="getNotificationsLength > 10") Показать еще ({{getNotificationsLength - 5}})
+      router-link.push__btn(:to="{name: 'Push'}" v-if="getNotificationsLength > 1") Показать все ({{getNotificationsLength}})
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import { getRouteByNotification } from '@/utils/notifications.utils.js';
 export default {
   name: 'Push',
   props: {
@@ -34,6 +37,7 @@ export default {
   },
   methods: {
     ...mapActions('profile/notifications', ['apiNotifications', 'readNotifications']),
+    getRouteByNotification,
     closePush() {
       if (!this.isOpen) return
       this.$emit('close-push')
