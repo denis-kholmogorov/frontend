@@ -64,7 +64,7 @@ export default {
       }
       const { email, passwd1, passwd2, firstName, lastName } = this
       this.register({ email, passwd1, passwd2, firstName, lastName, code: this.number }).then(() => {
-        this.$router.push({ name: 'News' })
+        this.$router.push({ name: 'RegisterSuccess' })
       })
     }
   },
