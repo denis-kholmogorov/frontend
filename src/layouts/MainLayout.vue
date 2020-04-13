@@ -5,15 +5,18 @@
       main-layout-header
       main.main-layout__page
         router-view
+    real-time-updater
 </template>
 
 <script>
 import MainLayoutHeader from '@/components/MainLayout/Header'
 import MainLayoutSidebar from '@/components/MainLayout/Sidebar'
+import RealTimeUpdater from '@/components/RealTimeUpdater'
 export default {
   components: {
     MainLayoutHeader,
-    MainLayoutSidebar
+    MainLayoutSidebar,
+    RealTimeUpdater
   }
 }
 </script>

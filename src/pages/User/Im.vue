@@ -12,7 +12,6 @@
     .im__chat(v-if="activeDialog")
       im-chat(:info="activeDialog" :messages="getMessages"
       :online="checkOnlineUser(activeDialog.last_message.recipient.last_online_time)" )
-    real-time-updater
 </template>
 
 <script>
@@ -20,10 +19,9 @@ import moment from 'moment'
 import { mapGetters, mapActions } from 'vuex'
 import ImDialog from '@/components/Im/Dialog'
 import ImChat from '@/components/Im/Chat'
-import RealTimeUpdater from '@/components/RealTimeUpdater'
 export default {
   name: 'Im',
-  components: { ImDialog, ImChat, RealTimeUpdater },
+  components: { ImDialog, ImChat },
   // data: () => ({
   //   intervalForMessages: null
   // }),
@@ -31,7 +29,7 @@ export default {
     ...mapGetters('profile/dialogs', ['getMessages', 'activeDialog', 'dialogs', 'dialogsLoaded']),
   },
   methods: {
-    ...mapActions('profile/dialogs', ['apiDialogs', 'dialogsMessages', 'switchDialog']),
+    ...mapActions('profile/dialogs', ['apiDialogs', 'dialogsMessages', 'switchDialog', 'closeDialog']),
     countPush(unread) {
       return unread > 0 ? unread : null
     },
@@ -49,7 +47,7 @@ export default {
       } else {
         console.log("No dialogs at all")
       }
-  }
+    }
   },
   beforeRouteEnter(to, from, next) {
     next(async vm => {
@@ -60,9 +58,12 @@ export default {
     })
   },
   beforeRouteUpdate(to, from, next) {
-    this.selectDialogByRoute(to, this);
+    this.selectDialogByRoute(to, this)
     next();
   },
+  beforeDestroy () {
+    this.closeDialog()
+  }
 }
 </script>
 
