@@ -6,7 +6,7 @@
           simple-svg(:filepath="'/static/img/search.svg'")
         input.main-layout__search-input(type="text" placeholder="Поиск" :value="searchText" @input="setSearchText($event.target.value)")
       .main-layout__push(@click="togglePush")
-        simple-svg(:filepath="'/static/img/push.svg'")
+        simple-svg(:filepath="'/static/img/push.svg'" :data-push="getNotificationsLength > 0 ? getNotificationsLength : false")
         push(:isOpen="isOpenPush" @close-push="togglePush")
     router-link.main-layout__user(v-if="getInfo" :to="{name: 'Profile'}")
       .main-layout__user-pic
@@ -27,6 +27,7 @@ export default {
   computed: {
     ...mapGetters('global/search', ['searchText']),
     ...mapGetters('profile/info', ['getInfo']),
+    ...mapGetters('profile/notifications', ['getNotificationsLength']),
     isAdminPage() {
       return this.$route.path.indexOf('admin') !== -1
     }
@@ -132,6 +133,26 @@ export default {
   .simple-svg-wrapper {
     width: 17px;
     height: 17px;
+    position: relative;
+
+    &[data-push]:after {
+      content: attr(data-push);
+      font-style: normal;
+      font-weight: bold;
+      font-size: 10px;
+      line-height: 15px;
+      width: 16px;
+      height: 16px;
+      background-color: #F9555F;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      top: -25px;
+      left: 7px;
+      padding-right: 1px;
+    }
   }
 }
 
