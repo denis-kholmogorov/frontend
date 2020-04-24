@@ -37,7 +37,10 @@ export default {
         url: 'notifications',
         method: 'GET'
       }).then(response => {
-        commit('setNotifications', response.data.data)
+
+        if (`${response.data.data.map(z => z.sent_time)}` !== `${state.notifications.map(z => z.sent_time)}`) {
+          commit('setNotifications', response.data.data)
+        }
         // добавить когда будет прод
         // setTimeout(() => {
         //   dispatch('apiNotifications')

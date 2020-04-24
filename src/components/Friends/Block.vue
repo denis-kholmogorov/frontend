@@ -62,10 +62,7 @@ export default {
     modalType: 'delete'
   }),
   computed: {
-    ...mapGetters('profile/dialogs', ['getResultById']),
-    dialogs() {
-      return this.getResultById('dialogs')
-    },
+    ...mapGetters('profile/dialogs', ['dialogs']),
     modalText() {
       return this.modalType === 'delete'
         ? `Вы уверены, что хотите удалить пользователя ${this.info.first_name + ' ' + this.info.last_name} из друзей?`
@@ -85,8 +82,8 @@ export default {
       this.modalType = id
       this.modalShow = true
     },
-    sendMessage(id) {
-       this.$router.push({ name: 'Im', query: { activeDialog: id } })
+    sendMessage(userId) {
+      this.$router.push({ name: 'Im', query: { userId: userId } })
     },
     onConfrim(id) {
       this.modalType === 'delete'
@@ -94,7 +91,7 @@ export default {
         : this.modalType === 'deleteModerator'
         ? console.log('delete moderator')
         : this.apiBlockUser(id).then(() => this.closeModal())
-    },
+    }
   }
 }
 </script>

@@ -8,7 +8,7 @@ export default {
   mounted () {
     this.intervalForMessages = setInterval(() => {
       if (this.activeDialog) {
-        this.dialogsMessages(this.activeDialog.id)
+        this.loadFreshMessages(this.activeDialog.id)
       }
     }, INTERVAL_DIALOG_MS)
 
@@ -20,7 +20,7 @@ export default {
     ...mapGetters('profile/dialogs', ['activeDialog']),
   },
   methods: {
-    ...mapActions('profile/dialogs', ['dialogsMessages']),
+    ...mapActions('profile/dialogs', ['loadFreshMessages']),
     ...mapActions('profile/notifications', ['apiNotifications']),
   },
   beforeDestroy () {

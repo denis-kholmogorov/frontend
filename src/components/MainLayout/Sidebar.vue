@@ -23,10 +23,7 @@ export default {
   name: 'MainLayoutSidebar',
   computed: {
     ...mapGetters('global/menu', ['getSidebarById']),
-    ...mapGetters('profile/dialogs', ['getResultById']),
-    unreadedMessages() {
-      return this.getResultById('unreadedMessages')
-    },
+    ...mapGetters('profile/dialogs', ['unreadedMessages']),
     isAdminPage() {
       return this.$route.path.indexOf('admin') !== -1
     },

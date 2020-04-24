@@ -5,19 +5,36 @@
         img(:src="info.last_message.recipient.photo" :alt="info.last_message.recipient.first_name")
       router-link.im-chat__user-name(:to="{name: 'ProfileId', params: {id: info.last_message.recipient.id}}") {{info.last_message.recipient.first_name + ' ' + info.last_message.recipient.last_name}}
       span.user-status(:class="{online}") {{statusText}}
-    .im-chat__message(ref="messageBlock")
-      .im-chat__message-day(v-for="day in messages" :key="day.date")
-        h5.im-chat__message-title {{day.date | moment('DD MMMM YYYY')}}
-        .im-chat__message-block(v-for="mes in day.messages" :key="mes.id" :class="{me: mes.isSentByMe}")
-          p.im-chat__message-text {{mes.message_text}}
-          span.im-chat__message-time {{mes.time | moment('hh:mm')}}
+    .im-chat__infitite_list_wrapper
+      virtual-list.im-chat__infitite_list.scroll-touch(:size="60"
+        :keeps="120"
+        :data-key="'sid'"
+        :data-sources="messagesGrouped"
+        :data-component="itemComponent"
+        :wrap-class="'im-chat__message'"
+        :root-tag="'section'"
+        @totop="onScrollToTop"
+        @scroll.passive="onScroll"
+        @tobottom="onScrollToBottom"
+        ref="vsl"
+      )
+        .im-chat__loader(slot="header", v-show="fetching")
+          .spinner(v-show="!isHistoryEndReached()")
+          .finished(v-show="isHistoryEndReached()") Больше сообщений нет
     form.im-chat__enter(action="#" @submit.prevent="onSubmitMessage")
       input.im-chat__enter-input(type="text" placeholder="Ваше сообщение..." v-model="mes")
 </template>
 
 <script>
 import moment from 'moment'
-import { mapActions } from 'vuex'
+import Vue from 'vue'
+import { mapActions, mapGetters } from 'vuex'
+import ChatMessage from '@/components/Im/ChatMessage'
+import VirtualList from 'vue-virtual-scroll-list'
+
+const makeHeader = msgDate => {
+  return { sid: `group-${msgDate}`, stubDate: true, date: msgDate }
+}
 export default {
   name: 'ImChat',
   props: {
@@ -26,24 +43,85 @@ export default {
     online: Boolean
   },
   data: () => ({
-    mes: ''
+    mes: '',
+    itemComponent: ChatMessage,
+    isUserViewHistory: false,
+    fetching: false
   }),
+  mounted() {
+    this.follow = true
+  },
+  watch: {
+    messages() {
+      if (this.follow) this.setVirtualListToBottom()
+    }
+  },
   computed: {
     statusText() {
       return this.online
         ? 'Онлайн'
         : 'был в сети ' + moment(this.info.last_message.recipient.last_online_time).fromNow()
+    },
+    messagesGrouped() {
+      let groups = []
+      let headerDate = null
+
+      for (const msg of this.messages) {
+        let msgDate = moment(msg.time).format('YYYY-MM-DD')
+        if (msgDate !== headerDate) {
+          headerDate = msgDate
+          groups.push(makeHeader(headerDate))
+        }
+        groups.push(msg)
+      }
+      return groups
     }
   },
   methods: {
-    ...mapActions('profile/dialogs', ['postMessage']),
+    ...mapActions('profile/dialogs', ['postMessage', 'loadOlderMessages']),
+    ...mapGetters('profile/dialogs', ['isHistoryEndReached']),
     onSubmitMessage() {
       this.postMessage({ id: this.info.id, message_text: this.mes })
       this.mes = ''
+    },
+    async onScrollToTop() {
+      if (this.$refs.vsl) {
+        if (!this.isHistoryEndReached()) {
+          let oldest = this.messagesGrouped[0]
+
+          this.fetching = true
+          await this.loadOlderMessages()
+          this.setVirtualListToOffset(1)
+
+          this.$nextTick(() => {
+            let offset = 0
+            for (const groupedMsg of this.messagesGrouped) {
+              if (groupedMsg.sid === oldest.sid) break
+              offset += this.$refs.vsl.getSize(groupedMsg.sid)
+            }
+
+            this.setVirtualListToOffset(offset)
+            this.fetching = false
+          })
+        }
+      }
+    },
+    onScroll() {
+      this.follow = false
+    },
+    onScrollToBottom() {
+      this.follow = true
+    },
+    setVirtualListToOffset(offset) {
+      if (this.$refs.vsl) {
+        this.$refs.vsl.scrollToOffset(offset)
+      }
+    },
+    setVirtualListToBottom() {
+      if (this.$refs.vsl) {
+        this.$refs.vsl.scrollToBottom()
+      }
     }
-  },
-  mounted() {
-    this.$refs.messageBlock.scrollTop = this.$refs.messageBlock.scrollHeight
   }
 }
 </script>
@@ -55,7 +133,6 @@ export default {
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
   height: 100%;
 }
 
@@ -64,12 +141,8 @@ export default {
   display: flex;
   align-items: center;
   height: 60px;
-  padding: 0 40px;
+  padding: 30px 20px;
   font-size: 13px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
   background-color: #F8FAFD;
 }
 
@@ -95,73 +168,24 @@ export default {
   }
 }
 
-.im-chat__message {
-  padding: 80px 40px 50px;
-  width: 100%;
-  overflow-y: scroll;
-  height: 100%;
+.im-chat__infitite_list_wrapper {
+  position: relative;
+  flex: 1;
 }
 
-.im-chat__message-day {
-  &+& {
-    margin-top: 50px;
-  }
+.im-chat__infitite_list {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow-y: auto;
 }
 
-.im-chat__message-title {
-  color: #8A94A4;
-  font-size: 15px;
-  margin-bottom: 55px;
-  text-align: center;
-  display: block;
-  width: 100%;
-}
-
-.im-chat__message-block {
-  display: flex;
-  align-items: center;
-  max-width: 460px;
-
-  &+& {
-    margin-top: 20px;
-  }
-
-  &.me + & {
-    margin-top: 30px;
-  }
-
-  &.me {
-    flex-direction: row-reverse;
-    max-width: 450px;
-    margin-left: auto;
-
-    .im-chat__message-text {
-      background-color: eucalypt;
-      color: #fff;
-      box-shadow: 0px 4px 15px #D4E8DD;
-    }
-
-    .im-chat__message-time {
-      margin-right: 15px;
-      margin-left: 0;
-    }
-  }
-}
-
-.im-chat__message-text {
-  background-color: #FFFFFF;
-  box-shadow: 0px 4px 15px #EFF1F6;
-  border-radius: 20px;
-  padding: 15px 20px;
-  color: steel-gray;
-  font-size: 15px;
-  line-height: 23px;
-}
-
-.im-chat__message-time {
-  font-size: 13px;
-  color: #BAC3D0;
-  margin-left: 15px;
+.im-chat__message > div {
+  padding-left: 30px;
+  padding-right: 30px;
+  padding: 20px;
 }
 
 .im-chat__enter {
@@ -179,6 +203,68 @@ export default {
 
   &::placeholder {
     color: #B0B0BC;
+  }
+}
+
+
+.im-chat__loader {
+  padding: 1em;
+  .finished {
+    font-size: 14px;
+    text-align: center;
+    color: #bfbfbf;
+  }
+  .spinner {
+    font-size: 10px;
+    margin: 0px auto;
+    text-indent: -9999em;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #ffffff;
+    background: linear-gradient(to right, eucalypt 10%, rgba(255, 255, 255, 0) 42%);
+    position: relative;
+    animation: load3 1.4s infinite linear;
+    transform: translateZ(0);
+  }
+  .spinner:before {
+    width: 50%;
+    height: 50%;
+    background: eucalypt;
+    border-radius: 100% 0 0 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: '';
+  }
+  .spinner:after {
+    background: #f8fafd;
+    width: 75%;
+    height: 75%;
+    border-radius: 50%;
+    content: '';
+    margin: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+  }
+  @-webkit-keyframes load3 {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes load3 {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 }
 </style>

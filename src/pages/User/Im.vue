@@ -10,7 +10,7 @@
       :online="checkOnlineUser(dialog.last_message.recipient.last_online_time)"
       @click.native="clickOnDialog(dialog.id)")
     .im__chat(v-if="activeDialog")
-      im-chat(:info="activeDialog" :messages="getMessages"
+      im-chat(:info="activeDialog" :messages="messages"
       :online="checkOnlineUser(activeDialog.last_message.recipient.last_online_time)" )
 </template>
 
@@ -26,10 +26,16 @@ export default {
   //   intervalForMessages: null
   // }),
   computed: {
-    ...mapGetters('profile/dialogs', ['getMessages', 'activeDialog', 'dialogs', 'dialogsLoaded']),
+    ...mapGetters('profile/dialogs', ['messages', 'activeDialog', 'dialogs'])
   },
   methods: {
-    ...mapActions('profile/dialogs', ['apiDialogs', 'dialogsMessages', 'switchDialog', 'closeDialog']),
+    ...mapActions('profile/dialogs', [
+      'loadFreshMessages',
+      'switchDialog',
+      'closeDialog',
+      'createDialogWithUser',
+      'apiLoadAllDialogs'
+    ]),
     countPush(unread) {
       return unread > 0 ? unread : null
     },
@@ -39,29 +45,32 @@ export default {
     clickOnDialog(dialogId) {
       this.$router.push({ name: 'Im', query: { activeDialog: dialogId } })
     },
-    selectDialogByRoute(route, vm) {
+    async selectDialogByRoute(route, vm) {
       if (route.query.activeDialog) {
-          vm.switchDialog(route.query.activeDialog);
+        vm.switchDialog(route.query.activeDialog)
+      } else if (route.query.userId) {
+        vm.createDialogWithUser(route.query.userId)
       } else if (vm.dialogs.length > 0) {
-          vm.$router.push({ name: 'Im', query: { activeDialog: vm.dialogs[0].id } })
+        vm.$router.push({ name: 'Im', query: { activeDialog: vm.dialogs[0].id } })
       } else {
-        console.log("No dialogs at all")
+        await vm.apiLoadAllDialogs()
+        if (vm.dialogs.length > 0) {
+          vm.$router.push({ name: 'Im', query: { activeDialog: vm.dialogs[0].id } })
+        }
+        console.log('No dialogs at all')
       }
     }
   },
   beforeRouteEnter(to, from, next) {
     next(async vm => {
-      if (!vm.dialogsLoaded) {
-        await vm.apiDialogs(vm.to)
-      }
-      vm.selectDialogByRoute(to, vm);
+      vm.selectDialogByRoute(to, vm)
     })
   },
   beforeRouteUpdate(to, from, next) {
     this.selectDialogByRoute(to, this)
-    next();
+    next()
   },
-  beforeDestroy () {
+  beforeDestroy() {
     this.closeDialog()
   }
 }

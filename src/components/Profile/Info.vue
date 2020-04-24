@@ -56,10 +56,7 @@ export default {
     modalType: 'deleteFriend'
   }),
   computed: {
-    ...mapGetters('profile/dialogs', ['getResultById']),
-    dialogs() {
-      return this.getResultById('dialogs')
-    },
+    ...mapGetters('profile/dialogs', ['dialogs']),
     statusText() {
       return this.online ? 'онлайн' : 'не в сети'
     },
@@ -77,7 +74,7 @@ export default {
   methods: {
     ...mapActions('users/actions', ['apiBlockUser', 'apiUnblockUser']),
     ...mapActions('profile/friends', ['apiAddFriends', 'apiDeleteFriends']),
-    ...mapActions('profile/dialogs', ['apiNewDialog', 'apiDialogs']),
+    ...mapActions('profile/dialogs', ['createDialogWithUser', 'apiLoadAllDialogs']),
     ...mapActions('users/info', ['apiInfo']),
     blockedUser() {
       if (this.blocked) return
@@ -120,8 +117,8 @@ export default {
     },
     onSentMessage() {
       if (this.blocked) return false
-      this.$router.push({ name: 'Im', query: { activeDialog: id } })
-    },
+      this.$router.push({ name: 'Im', query: { userId: this.info.id } })
+    }
   }
 }
 </script>
