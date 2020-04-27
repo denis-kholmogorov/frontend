@@ -36,7 +36,6 @@ export default {
 .im-chat__message-title {
   color: #8A94A4;
   font-size: 15px;
-  margin-bottom: 55px;
   text-align: center;
   display: block;
   width: 100%;
