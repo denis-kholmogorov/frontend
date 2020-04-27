@@ -5,7 +5,7 @@
       main-layout-header
       main.main-layout__page
         router-view
-    //- real-time-updater
+    real-time-updater
 </template>
 
 <script>
