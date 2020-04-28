@@ -2116,8 +2116,8 @@ paths:
           schema:
             type: string
             example: "Something"
-        - name: from_message_id
-          in: from_message_id
+        - name: fromMessageId
+          in: fromMessageId
           description: "Если передано, то начинать отчет (offset и limit) c переданного id, а не с самого свежего сообщения. Само сообщение включить в результат"
           required: false
           schema:

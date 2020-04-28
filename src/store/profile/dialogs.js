@@ -128,7 +128,7 @@ export default {
       await axios({
         url: `dialogs/${getters.activeDialogId}/messages`,
         params: {
-          from_message_id: getters.oldestKnownMessageId,
+          fromMessageId: getters.oldestKnownMessageId,
           offset: 1,
           itemPerPage: 2
         },
