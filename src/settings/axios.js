@@ -7,10 +7,10 @@ axios.defaults.headers['content-type'] = 'application/json';
 axios.defaults.withCredentials = true;
 switch (NODE_ENV) {
   case 'development':
-    axios.defaults.baseURL =  'http://localhost:8086/api/v1/';
+    axios.defaults.baseURL =  'http://185.193.143.204:8086/api/v1/';
     break;
   case 'production':
-    axios.defaults.baseURL =  'http://localhost:8086/api/v1/';
+    axios.defaults.baseURL =  'http://185.193.143.204:8086/api/v1/';
     break;
   default:
     axios.defaults.baseURL =  'https://virtserver.swaggerhub.com/andrewleykin/social/1.0.4/api/v1/';
